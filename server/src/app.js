@@ -1,23 +1,23 @@
 import express from 'express'
 import createError from 'http-errors'
-import path from 'path'
 import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import cors from 'cors'
+import { Model } from 'objection'
+import knex from './lib/knex'
 
 import indexRouter from './routes/index'
 import apiRouter from './routes/api'
 
 const app = express()
 
+Model.knex(knex)
+
 app.use(bodyParser.json({limit: '50mb'}))
 
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors())
 
 app.use('/', indexRouter)

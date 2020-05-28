@@ -3,20 +3,27 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "nodemon --exec 'babel-node src/bin/www.js'",
+        "dev": "nodemon --exec 'babel-node -r ./node_modules/dotenv/config ./src/bin/www.js'",
         "build": "babel src/ -d dist/",
-        "start": "NODE_ENV=production node dist/bin/www.js"
+        "start": "NODE_ENV=production node -r ./node_modules/dotenv/config dist/bin/www.js",
+        "knex": "knex --esm --knexfile=./src/config/knexfile.js"
     },
     "dependencies": {
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",
+        "date-fns": "^2.14.0",
         "debug": "^4.1.1",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
-        "http-errors": "^1.7.3"
+        "http-errors": "^1.7.3",
+        "knex": "^0.21.1",
+        "morgan": "^1.10.0",
+        "objection": "^2.1.5",
+        "pg": "^8.2.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.10.0",
         "@babel/node": "^7.8.7",
         "@babel/preset-env": "^7.9.6",
         "nodemon": "^2.0.4"

@@ -1,4 +1,3 @@
-import db from '../lib/db'
 import app from '../app'
 import debug from 'debug'
 import http from 'http'
@@ -23,16 +22,10 @@ const server = http.createServer(app)
  * Listen on provided port, on all network interfaces.
  */
 
-db()
-	.then(() => {
-		console.log('Server running on port', port)
-		server.listen(port)
-		server.on('error', onError)
-		server.on('listening', onListening)
-	})
-	.catch(() => {
-		throw "Couldn't connect to database. Is MongoDB running?"
-	})
+console.log('Server running on port', port)
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
 
 /**
  * Normalize a port into a number, string, or false.
