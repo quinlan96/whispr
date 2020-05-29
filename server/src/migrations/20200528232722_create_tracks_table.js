@@ -5,7 +5,7 @@ export const up = (knex) => {
             table.increments('id')
             table.integer('user_id')
             table.string('title').nullable()
-            table.float('duration')
+            table.float('duration').nullable()
             table.string('file').nullable()
             table.timestamps()
         })
