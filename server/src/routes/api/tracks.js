@@ -11,8 +11,10 @@ router.get('/tracks', async (req, res, next) => {
 
 router.post('/tracks', async (req, res, next) => {
     const track = await Track.query().insertGraph({
-        title: req.body.title,
-    })
+		title: req.body.title
+	})
+	
+	await track.$relatedQuery('user').relate(req.body.user_id)
     
     res.json(track)
 }) 
