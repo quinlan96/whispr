@@ -1,7 +1,7 @@
 <template>
 	<b-navbar>
 		<template slot="brand">
-			<b-navbar-item>ThisWeeksSponsor</b-navbar-item>
+			<b-navbar-item><font-awesome-icon icon="headphones" style="margin-right: .75rem;" />ThisWeeksSponsor</b-navbar-item>
 		</template>
 		<template slot="start">
 			<b-navbar-item tag="router-link" to="/">Home</b-navbar-item>
@@ -20,7 +20,6 @@ export default {
 @import "../assets/scss/_variables";
 
 .navbar {
-	
 	.navbar-item {
 	}
 }
