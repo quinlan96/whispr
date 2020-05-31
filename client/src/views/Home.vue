@@ -1,7 +1,9 @@
 <template>
   <div class="home">
 	<Navbar />
-	<b-container><h1>Hi</h1></b-container>
+	<div class="container">
+		<h1>Hi</h1>
+	</div>
 	<Footer />
   </div>
 </template>

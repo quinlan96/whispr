@@ -18,4 +18,10 @@ export default {
 
 <style scoped lang="scss">
 @import "../assets/scss/_variables";
+
+.navbar {
+	
+	.navbar-item {
+	}
+}
 </style>
