@@ -8,8 +8,9 @@ $grey: hsl(0, 0%, 48%);
 $grey-light: hsl(0, 0%, 71%);
 $grey-lighter: hsl(0, 0%, 86%);
 
-$primary: #2a9fd6 !default;
+$primary: #f44336 !default;
 $primary-light: lighten($primary, 10);
+$primary-dark: #c62828;
 $link: #3273e2;
 
 $white: #fff;
@@ -86,3 +87,14 @@ $file-cta-background-color: $grey-darker;
 $progress-bar-background-color: $grey-dark;
 
 $panel-heading-background-color: $grey-dark;
+
+$fullhd: 1000px + (2 * 32px);
+
+:export {
+	waveform_primary: $grey-light;
+	waveform_primary_active: $primary;
+	waveform_secondary: $grey;
+	waveform_secondary_active: $primary-dark;
+	waveform_primary_seek: mix($primary, $grey-light, 40);
+	waveform_secondary_seek: mix($primary-dark, $grey, 40);
+}

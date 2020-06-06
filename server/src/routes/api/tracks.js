@@ -4,7 +4,16 @@ import Track from '../../models/Track'
 const router = express.Router()
 
 router.get('/tracks', async (req, res, next) => {
-    const tracks = await Track.query()
+	const tracks = await Promise.all((await Track.query()).map(async (track) => {
+		return {
+			id: track.id,
+			title: track.title,
+			duration: track.duration,
+			track_url: track.getTrackUrl(),
+			user: (await track.$relatedQuery('user')).username,
+			posted: track.created_at
+		}
+	}))
 
     res.json(tracks)
 })
@@ -27,6 +36,24 @@ router.get('/tracks/:id', async (req, res, next) => {
     }
 
     res.json(track)
+})
+
+router.get('/tracks/:id/:file', async (req, res, next) => {
+	const { id, file } = req.params
+
+	const track = await Track.query().findById(id)
+
+	if(!track) {
+		return next(createError(404, 'Track not found'))
+	}
+
+	if(track.file !== file) {
+		return next(createError(404, 'Track file not found'))
+	}
+	
+	console.log(track.getTrackFile())
+    
+	res.sendFile(track.getTrackFile())
 })
 
 router.get('/tracks/:id/uploadFile', async (req, res, next) => {

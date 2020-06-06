@@ -1,26 +1,31 @@
 <template>
     <div>
         <h1 class="title">Latest Tracks</h1>
-        <div class="box">
-            <div class="media">
-                <div class="media-left">
-                    <figure class="image is-64x64">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image" />
-                    </figure>
-                </div>
-                <div class="media-content">
-                    <div class="content">
-                        <strong>Track name</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<Track v-for="track in tracks" :key="track.id" :track="track" :currentTrack="playing" @on-play-track="updatePlaying" />
     </div>
 </template>
 
 <script>
+import Track from './Track.vue'
+
 export default {
-	name: 'Navbar'
+	name: 'Navbar',
+	props: [
+		'tracks'
+	],
+	data() {
+		return {
+			playing: null
+		}
+	},
+	methods: {
+		updatePlaying(id) {
+			this.playing = id
+		}
+	},
+	components: {
+		Track
+	}
 }
 </script>
 

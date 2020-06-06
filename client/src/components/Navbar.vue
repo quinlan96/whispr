@@ -1,11 +1,15 @@
 <template>
 	<b-navbar>
 		<template slot="brand">
-			<b-navbar-item><font-awesome-icon icon="headphones" style="margin-right: .75rem;" />ThisWeeksSponsor</b-navbar-item>
+			<b-navbar-item>
+				<img src="../assets/images/logo.svg" />
+				<span style="margin-left: .5rem">ThisWeeksSponsor</span>
+			</b-navbar-item>
 		</template>
-		<template slot="start">
-			<b-navbar-item tag="router-link" to="/">Home</b-navbar-item>
-			<b-navbar-item tag="router-link" to="/upload">Upload</b-navbar-item>
+		<template slot="end">
+			<b-navbar-item tag="div">
+				<b-button type="is-light" outlined>Sign In</b-button>
+			</b-navbar-item>
 		</template>
 	</b-navbar>
 </template>
@@ -18,9 +22,4 @@ export default {
 
 <style scoped lang="scss">
 @import "../assets/scss/_variables";
-
-.navbar {
-	.navbar-item {
-	}
-}
 </style>
