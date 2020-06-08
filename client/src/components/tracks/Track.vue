@@ -45,7 +45,6 @@ export default {
 	},
 	watch: {
 		currentTrack: function(newVal) {
-			console.log(newVal)
 			if(this.track.id != newVal) {
 				this.playing = false
 				this.$refs.audio.pause()
@@ -55,15 +54,21 @@ export default {
 	methods: {
 		toggleTrack() {
 			if(this.playing) {
-				this.playing = false
-				this.$refs.audio.pause()
-				this.$emit('on-play-track', null)
+                this.pauseTrack()
 			} else {
-				this.playing = true
-				this.$refs.audio.play()
-				this.$emit('on-play-track', this.track.id)
+                this.playTrack()
 			}
 		},
+        playTrack() {
+            this.playing = true
+            this.$refs.audio.play()
+            this.$emit('on-play-track', this.track.id)
+        },
+        pauseTrack() {
+            this.playing = false
+            this.$refs.audio.pause()
+            this.$emit('on-play-track', null)
+        },
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
 		},

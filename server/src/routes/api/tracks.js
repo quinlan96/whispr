@@ -5,12 +5,13 @@ const router = express.Router()
 
 router.get('/tracks', async (req, res, next) => {
 	const tracks = await Promise.all((await Track.query()).map(async (track) => {
+        const user = await track.$relatedQuery('user')
 		return {
 			id: track.id,
 			title: track.title,
 			duration: track.duration,
 			track_url: track.getTrackUrl(),
-			user: (await track.$relatedQuery('user')).username,
+			user: user ? user.username : null,
 			posted: track.created_at
 		}
 	}))
@@ -51,8 +52,6 @@ router.get('/tracks/:id/:file', async (req, res, next) => {
 		return next(createError(404, 'Track file not found'))
 	}
 	
-	console.log(track.getTrackFile())
-    
 	res.sendFile(track.getTrackFile())
 })
 
