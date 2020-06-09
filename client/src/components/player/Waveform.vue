@@ -25,9 +25,9 @@ export default {
 	data() {
 		return {
 			context: null,
-			width: 880,
+			width: 800,
 			height: 60,
-			bars: 176,
+			bars: 160,
 			seek: null,
 			data: []
 		}

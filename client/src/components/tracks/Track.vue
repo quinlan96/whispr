@@ -127,19 +127,24 @@ export default {
 
 .player-controls {
 	padding: .5rem 0;
+    width: 100px;
+
+    .player-play {
+        display: block;
+
+        .player-play-icon {
+            font-size: 3rem;
+            cursor: pointer;
+        }
+    }
+
+    .player-timecode {
+        display: block;
+        font-size: .94rem;
+        margin-top: .75rem;
+    }
 }
 
-.player-play {
-	display: block;
-}
 
-.player-play-icon {
-	font-size: 3rem;
-	cursor: pointer;
-}
 
-.player-timecode {
-	margin-top: .75rem;
-	display: block;
-}
 </style>
