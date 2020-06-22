@@ -8,7 +8,7 @@
 		</template>
 		<template slot="end">
 			<b-navbar-item tag="div">
-				<b-button type="is-light" outlined>Sign In</b-button>
+				<router-link to="/login" class="is-light">Log In</router-link>
 			</b-navbar-item>
 		</template>
 	</b-navbar>

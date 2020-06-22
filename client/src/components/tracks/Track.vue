@@ -60,14 +60,10 @@ export default {
 			}
 		},
         playTrack() {
-            this.playing = true
             this.$refs.audio.play()
-            this.$emit('on-play-track', this.track.id)
         },
         pauseTrack() {
-            this.playing = false
             this.$refs.audio.pause()
-            this.$emit('on-play-track', null)
         },
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
@@ -83,6 +79,16 @@ export default {
 		
 		this.$refs.audio.ontimeupdate = () => {
 			this.currentTime = this.$refs.audio.currentTime
+		}
+
+		this.$refs.audio.onplay = () => {
+			this.playing = true
+            this.$emit('update-track', this.track.id)
+		}
+
+		this.$refs.audio.onpause = () => {
+			this.playing = false
+            this.$emit('update-track', null)
 		}
 
 		this.$refs.audio.onended = () => {
@@ -117,10 +123,6 @@ export default {
 				display: block;
 				font-size: .8rem;
 			}
-		}
-
-		.track-posted {
-
 		}
 	}
 }

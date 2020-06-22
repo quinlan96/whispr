@@ -1,7 +1,13 @@
 <template>
     <div>
         <h1 class="title">Latest Tracks</h1>
-		<Track v-for="track in tracks" :key="track.id" :track="track" :currentTrack="playing" @on-play-track="updatePlaying" />
+		<Track
+			v-for="track in tracks"
+			:key="track.id"
+			:track="track"
+			:currentTrack="playing"
+			@update-track="updatePlaying"
+		/>
     </div>
 </template>
 
