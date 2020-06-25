@@ -4,6 +4,10 @@
   background-color: $black-ter;
 }
 
+a:focus {
+    outline: none; 
+}
+
 .delete {
   background-color: rgba(255, 255, 255, 0.2);
 
@@ -14,6 +18,10 @@
 
 .label {
   color: $grey-lighter;
+}
+
+.checkbox:hover {
+    color: $white;
 }
 
 .notification {
@@ -31,23 +39,8 @@
 }
 
 .card {
-  $card-border-color: lighten($grey-darker, 5);
-  box-shadow: none;
-  background-color: $grey-darker;
-
-  .card-header {
-    box-shadow: none;
-    background-color: rgba($black-bis, 0.2);
-  }
-
-  .card-footer {
-    background-color: rgba($black-bis, 0.2);
-  }
-
-  .card-footer,
-  .card-footer-item {
-    border-color: $card-border-color;
-  }
+  background-color: $grey-accent;
+  border-radius: .3rem;
 }
 
 .message-header {

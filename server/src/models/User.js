@@ -2,6 +2,10 @@ import { Model } from 'objection'
 import Track from './Track'
 
 class User extends Model {
+    authenticated(password) {
+        return this.password === password
+    }
+
     static get tableName() {
         return 'users'
 	}
