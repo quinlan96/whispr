@@ -1,5 +1,6 @@
 import ApiError from './ApiError'
 import { API_BASE } from '@/constants'
+import { getToken } from '@/services/auth'
 
 const defaultOptions = {
     method: 'GET',
@@ -14,6 +15,14 @@ const getUrl = (endpoint) => {
 }
 
 const request = (url, options) => {
+    const token = getToken()
+
+    if(token) {
+        options.headers['Authorization'] = `Bearer ${token}`
+    }
+
+    console.log(options)
+
     if(options.query) {
         url = new URL(url)
 

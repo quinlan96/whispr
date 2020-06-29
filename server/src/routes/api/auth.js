@@ -2,9 +2,10 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 import { getUnixTime, addHours, addDays } from 'date-fns'
-import { JWT_SECRET } from '../../constants'
 
+import authenticate from '../../middleware/auth'
 import User from '../../models/User'
+import { JWT_SECRET } from '../../constants'
 
 const router = express.Router()
 
@@ -38,7 +39,11 @@ router.post('/auth/login', async (req, res, next) => {
         }, JWT_SECRET)
 
         res.json({
-            token: accessToken
+            token: accessToken,
+            user: {
+                id: user.id,
+                username: user.username
+            }
         })
     } catch(e) {
         return next(createError(401, e.message))
@@ -46,7 +51,15 @@ router.post('/auth/login', async (req, res, next) => {
 })
 
 router.post('/auth/signup', async (req, res, next) => {
+})
 
+router.get('/auth/get-user', authenticate, async (req, res, next) => {
+    const user = await User.query().findById(req.token.id)
+
+    res.json({
+        id: user.id,
+        username: user.username
+    })
 })
 
 export default router

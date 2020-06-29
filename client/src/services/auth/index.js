@@ -9,9 +9,11 @@ const login = async (username, password, rememberMe = false) => {
     }
 
     try {
-        const { token } = await post('/auth/login', body)
+        const { token, user } = await post('/auth/login', body)
 
         setToken(token)
+
+        return user
     } catch(e) {
         throw new ApiError(401, e.message)
     }

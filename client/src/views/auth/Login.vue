@@ -58,7 +58,10 @@ export default {
             this.error = ''
 
             try {
-                await login(this.username, this.password, this.rememberMe)
+                const user = await login(this.username, this.password, this.rememberMe)
+
+                this.$store.commit('setUser', user)
+
                 this.$router.push('/')
             } catch (e) {
                 this.error = e.message
@@ -67,6 +70,8 @@ export default {
         closeError() {
             this.error = ''
         }
+    },
+    mounted() {
     },
 	components: {
 		Navbar,

@@ -6,6 +6,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHeadphones, faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueMoment from 'vue-moment'
+import store from './store'
 
 library.add(faHeadphones)
 library.add(faPlayCircle)
@@ -18,5 +19,6 @@ Vue.use(VueMoment)
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
