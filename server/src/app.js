@@ -1,6 +1,7 @@
 import express from 'express'
 import createError from 'http-errors'
 import bodyParser from 'body-parser'
+import fileUpload from 'express-fileupload'
 import logger from 'morgan'
 import cors from 'cors'
 import { Model } from 'objection'
@@ -14,6 +15,7 @@ const app = express()
 Model.knex(knex)
 
 app.use(bodyParser.json({limit: '50mb'}))
+app.use(fileUpload({ createParentPath: true }))
 
 app.use(logger('dev'))
 app.use(express.json())

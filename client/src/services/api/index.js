@@ -1,6 +1,8 @@
 import ApiError from './ApiError'
 import { API_BASE } from '@/constants'
 
+import store from '@/store'
+
 const defaultOptions = {
     method: 'GET',
     headers: {
@@ -14,6 +16,12 @@ const getUrl = (endpoint) => {
 }
 
 const request = (url, options) => {
+    const token = store.state.auth.token
+
+    if(token) {
+        options.headers['Authorization'] = `Bearer ${token}`
+    }
+
     if(options.query) {
         url = new URL(url)
 
@@ -26,6 +34,10 @@ const request = (url, options) => {
         if(!resp.ok) {
             const err = await resp.json()
 
+            if(!err.message === 'Token expired') {
+                store.dispatch('logout')
+            }
+
             throw new ApiError(err.status, err.message)
         }
 
@@ -36,9 +48,11 @@ const request = (url, options) => {
         if(error) {
             if(error.response) {
                 // Some error happened with the server side
+                // eslint-disable-next-line
                 console.log(error.response)
             } else {
                 // Some error happened while processing the request
+                // eslint-disable-next-line
                 console.log('Error Message:', error.message)
             }
 

@@ -5,8 +5,11 @@ export const up = (knex) => {
             table.increments('id')
             table.integer('user_id')
             table.string('title').nullable()
-            table.float('duration').nullable()
+            table.string('description').nullable()
+            table.boolean('is_private')
             table.string('file').nullable()
+            table.string('original_file').nullable()
+            table.json('waveform').nullable()
             table.timestamps()
         })
 };

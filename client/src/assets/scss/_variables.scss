@@ -34,11 +34,8 @@ $box-color: $text;
 $box-background-color: $grey-accent;
 $box-shadow: none;
 
-$link-hover: $primary-light;
-$link-focus: $primary-light;
-$link-active: $primary-light;
-$link-hover-border: $grey-dark;
-$link-active-border: $grey;
+$link-hover: darken($link, 20);
+$link-focus: darken($link, 20);
 
 $button-color: $text;
 $button-background-color: #111;

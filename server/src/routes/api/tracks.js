@@ -1,30 +1,70 @@
 import express from 'express'
+import createError from 'http-errors'
+import authenticate from '../../middleware/auth'
+
+import { STORAGE_DIR } from '../../constants'
+
 import Track from '../../models/Track'
 
+import AudioContext from 'web-audio-api'
+
 const router = express.Router()
+
+const generateWaveform = (audioBuffer) => {
+    const rawData = audioBuffer.getChannelData(0)
+    const samples = 160
+    const blockSize = Math.floor(rawData.length / samples)
+    const filteredData = []
+
+    for(let i = 0; i < samples; i++) {
+        let blockStart = blockSize * i
+        let sum = 0
+
+        for(let j = 0; j < blockSize; j++) {
+            sum += Math.abs(rawData[blockStart + j])
+        }
+
+        filteredData.push(sum / blockSize)
+    }
+
+    return filteredData
+}
+
+const normalizeData = data => {
+    const multiplier = Math.pow(Math.max(...data), -1)
+
+    return data.map(n => n * multiplier)
+}
 
 router.get('/tracks', async (req, res, next) => {
 	const tracks = await Promise.all((await Track.query()).map(async (track) => {
         const user = await track.$relatedQuery('user')
+
 		return {
 			id: track.id,
-			title: track.title,
-			duration: track.duration,
-			track_url: track.getTrackUrl(),
-			user: user ? user.username : null,
-			posted: track.created_at
+            title: track.title,
+            description: track.description,
+            trackUrl: track.getTrackUrl(),
+            waveform: track.waveform,
+            user: user ? user.username : null,
+            posted: track.created_at
 		}
 	}))
 
     res.json(tracks)
 })
 
-router.post('/tracks', async (req, res, next) => {
+router.post('/tracks', authenticate, async (req, res, next) => {
+    const userId = req.token.id
+
     const track = await Track.query().insertGraph({
-		title: req.body.title
-	})
+        id: req.body.id,
+        title: req.body.title,
+        description: req.body.description,
+        is_private: req.body.isPrivate
+    })
 	
-	await track.$relatedQuery('user').relate(req.body.user_id)
+	await track.$relatedQuery('user').relate(userId)
     
     res.json(track)
 }) 
@@ -55,10 +95,45 @@ router.get('/tracks/:id/:file', async (req, res, next) => {
 	res.sendFile(track.getTrackFile())
 })
 
-router.get('/tracks/:id/uploadFile', async (req, res, next) => {
+router.post('/tracks/:id/upload-track', async (req, res, next) => {
+    const file = req.files.file
+
+    let track = await Track.query().findById(req.params.id)
+
+    if(!track) {
+        return next(createError(404, 'Track not found'))
+    }
+
+    const audioContext = new AudioContext.AudioContext()
+
+    audioContext.decodeAudioData(file.data, async (audioBuffer) => {
+        const waveform = normalizeData(generateWaveform(audioBuffer))
+        console.log(waveform)
+
+        await track.$query().patch({
+            waveform: JSON.stringify(waveform)
+        })
+    }, (err) => {
+        console.log(err)
+    })
+
+    const filename = 'track.' + file.name.split('.').pop()
+
+    try {
+        file.mv(`${STORAGE_DIR}/${track.id}/${filename}`)
+    } catch(e) {
+        console.log(e.message)
+    }
+
+    track = await Track.query().patchAndFetchById(track.id, {
+        file: filename,
+        original_file: file.name
+    })
+
+    res.json({})
 })
 
-router.get('tracks/:id/deleteFile', async (req, res, next) => {
+router.delete('/tracks/:id/delete-track', async (req, res, next) => {
 })
 
 export default router
