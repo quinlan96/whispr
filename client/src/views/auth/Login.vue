@@ -5,7 +5,7 @@
             <div class="card login-form">
                 <div class="card-content">
                     <h2 class="title has-text-centered">Login</h2>
-                    <form @submit="submitLogin">
+                    <form @submit="handleLogin">
                         <b-field label="Username">
                             <b-input v-model="username" required />
                         </b-field>
@@ -23,7 +23,7 @@
                                 <div class="level-left">
                                     <b-button native-type="submit" class="level-item" type="is-primary">Login</b-button>
                                     <span class="level-item">or</span>
-                                    <router-link to="/signup" class="level-item">Signup</router-link>
+                                    <router-link :to="{ name: 'Signup' }" class="level-item">Signup</router-link>
                                 </div>
                             </div>
                         </b-field>
@@ -36,10 +36,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-
-import { login } from '@/services/auth'
 
 export default {
 	name: 'Login',
@@ -51,18 +51,23 @@ export default {
             error: ''
         }
     },
+    computed: {
+        ...mapGetters(['loggedIn'])
+    },
     methods: {
-        async submitLogin(e) {
+        async handleLogin(e) {
             e.preventDefault()
 
             this.error = ''
 
             try {
-                const user = await login(this.username, this.password, this.rememberMe)
+                this.$store.dispatch('login', {
+                    username: this.username,
+                    password: this.password,
+                    rememberMe: this.rememberMe
+                })
 
-                this.$store.commit('setUser', user)
-
-                this.$router.push('/')
+                this.$router.push({ name: 'Home' })
             } catch (e) {
                 this.error = e.message
             }
@@ -71,7 +76,10 @@ export default {
             this.error = ''
         }
     },
-    mounted() {
+    created() {
+        if(this.loggedIn) {
+            this.$router.push({ name: 'Home' })
+        }
     },
 	components: {
 		Navbar,

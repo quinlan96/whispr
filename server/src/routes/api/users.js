@@ -4,9 +4,16 @@ import User from '../../models/User'
 const router = express.Router()
 
 router.get('/users', async (req, res, next) => {
-    const users = await User.query()
+	const users = await Promise.all((await User.query()).map(async (user) => {
+        const roles = await user.getRoles()
 
-    res.json(users)
+		return {
+            ...user,
+            roles: roles
+		}
+	}))
+
+    return res.json(users)
 })
 
 router.post('/users', async (req, res, next) => {

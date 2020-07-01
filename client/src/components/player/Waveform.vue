@@ -20,7 +20,8 @@ import { BAR_WIDTH, BAR_GAP } from '@/constants'
 export default {
 	name: 'Waveform',
 	props: [
-		'progress'
+		'progress',
+        'data'
 	],
 	data() {
 		return {
@@ -28,8 +29,7 @@ export default {
 			width: 800,
 			height: 60,
 			bars: 160,
-			seek: null,
-			data: []
+			seek: null
 		}
 	},
 	watch: {
@@ -46,8 +46,8 @@ export default {
 			this.data.map((length, index) => this.drawBar(index, length))
 		},
 		drawBar(index, length) {
-			this.drawRoundedLine(index, length)
-			this.drawRoundedLine(index, length, true)
+			this.drawRoundedLine(index, length * (this.height * (2 / 3)))
+			this.drawRoundedLine(index, length * (this.height * (2 / 3)), true)
 
 		},
 		calculateColor(index, reverse) {
@@ -143,10 +143,6 @@ export default {
 		const canvas = this.$refs['canvas']
 		this.context = canvas.getContext('2d')
 		this.context.translate(0, this.height * (2 / 3))
-
-		this.data = [...Array(this.bars)].map(() => {
-			return Math.floor(Math.random() * 40)
-		})
 
 		this.updateCanvas()
 	}

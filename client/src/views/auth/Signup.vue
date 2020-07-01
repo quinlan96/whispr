@@ -19,7 +19,7 @@
                             <div class="level-left">
                                 <b-button class="level-item" type="is-primary">Signup</b-button>
                                 <span class="level-item">or</span>
-                                <router-link to="/login" class="level-item">Login</router-link>
+                                <router-link :to="{ name: 'Login' }" class="level-item">Login</router-link>
                             </div>
                         </div>
                     </b-field>

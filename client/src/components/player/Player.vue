@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<audio ref="audio" :src="track.track_url" />
+		<audio ref="audio" :src="track.trackUrl" />
 		<Waveform />
 	</div>
 </template>

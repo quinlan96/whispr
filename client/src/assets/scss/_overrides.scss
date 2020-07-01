@@ -1,7 +1,7 @@
 // Overrides
 
 .hero {
-  background-color: $black-ter;
+    background-color: $black-ter;
 }
 
 a:focus {
@@ -9,15 +9,27 @@ a:focus {
 }
 
 .delete {
-  background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 .label {
-  color: $grey-lighter;
+    color: $grey-lighter;
+}
+
+input[type=checkbox] {
+    vertical-align: middle;
+}
+
+.b-checkbox .control-label {
+    vertical-align: middle;
+}
+
+label.b-checkbox {
+    vertical-align: baseline;
 }
 
 .checkbox:hover {
@@ -25,31 +37,31 @@ a:focus {
 }
 
 .notification {
-  @each $name, $pair in $colors {
-    $color: nth($pair, 1);
-    $color-invert: nth($pair, 2);
+    @each $name, $pair in $colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
 
-    &.is-#{$name} {
-      a:not(.button) {
-        color: $color-invert;
-        text-decoration: underline;
-      }
+        &.is-#{$name} {
+            a:not(.button) {
+                color: $color-invert;
+                text-decoration: underline;
+            }
+        }
     }
-  }
 }
 
 .card {
-  background-color: $grey-accent;
-  border-radius: .3rem;
+    background-color: $grey-accent;
+    border-radius: .3rem;
 }
 
 .message-header {
-  background-color: $black-ter;
-  color: $white;
+    background-color: $black-ter;
+    color: $white;
 }
 
 .message-body {
-  border-color: $black-ter;
+    border-color: $black-ter;
 }
 
 .modal-card-body {
@@ -58,28 +70,95 @@ a:focus {
 
 .modal-card-foot,
 .modal-card-head {
-  border-color: $black-ter;
+    border-color: $black-ter;
 }
 
 .navbar {
-  border: 1px solid $grey-darker;
-  .navbar-dropdown {
     border: 1px solid $grey-darker;
-  }
 
-  @include touch {
-    .navbar-menu {
-      background-color: $navbar-background-color;
+    .navbar-dropdown {
+        border: 1px solid $grey-darker;
     }
-  }
+
+    @include touch {
+        .navbar-menu {
+            background-color: $navbar-background-color;
+        }
+    }
 }
 
 .hero {
-  .navbar {
-    &,
-    .navbar-menu,
-    .navbar-dropdown {
-      border: none;
+    .navbar {
+        &,
+        .navbar-menu,
+        .navbar-dropdown {
+            border: none;
+        }
     }
-  }
+}
+
+#dropzone {
+    border: 3px dashed $white;
+    padding: 2rem 0;
+    border-radius: .75rem;
+    cursor: pointer;
+}
+
+.dz-message {
+    .dropzone-custom-message {
+        .dropzone-choose-file {
+            font-weight: 700;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.dz-preview {
+    margin: 1rem 0;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    cursor: auto;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .dz-image {
+        margin-right: 1rem;
+    }
+    .dz-details {
+        width: 100%;
+
+        .dz-track-info {
+            display: flex;
+            width: 100%;
+
+            .dz-filename {
+                flex-grow: 1;
+            }
+        }
+
+        .dz-error-message {
+            display: none;
+        }
+    }
+
+    .dz-remove {
+        margin-left: 1rem;
+        cursor: pointer;
+
+        &:hover {
+            color: $primary;
+        }
+    }
+}
+
+.dz-preview.dz-error {
+    .dz-error-message {
+        display: block;
+    }
 }

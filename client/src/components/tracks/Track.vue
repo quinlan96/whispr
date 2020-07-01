@@ -3,7 +3,7 @@
 		<div class="media">
 			<div class="player-controls media-left has-text-centered">
 				<span class="player-play" @click="toggleTrack">
-					<font-awesome-icon :icon="playing ? 'pause-circle' : 'play-circle'" class="player-play-icon" />
+                    <b-icon :icon="playing ? 'pause-circle' : 'play-circle'" size="is-large" class="player-play-icon"></b-icon>
 				</span>
 				<span class="player-timecode">{{ formatTime(currentTime) }}/{{ formatTime(duration) }}</span>
 			</div>
@@ -16,8 +16,9 @@
 						</div>
 						<div class="track-posted">{{ track.posted | moment('from', 'now') }}</div>
 					</div>
-					<audio ref="audio" :src="track.track_url" />
+					<audio ref="audio" :src="track.trackUrl" />
 					<Waveform
+                        :data="track.waveform"
 						:progress="currentTime / duration"
 						@set-progress="setProgress"
 					/>
@@ -133,7 +134,6 @@ export default {
         display: block;
 
         .player-play-icon {
-            font-size: 3rem;
             cursor: pointer;
         }
     }

@@ -25,6 +25,10 @@ router.post('/auth/login', async (req, res, next) => {
         return next(createError(401, 'Username and password do not match'))
     }
 
+    user.roles = await user.getRoles()
+
+    console.log(user.roles)
+
     let expiryAt = getUnixTime(addHours(new Date(), 1))
 
     if(rememberMe) {
@@ -42,7 +46,8 @@ router.post('/auth/login', async (req, res, next) => {
             token: accessToken,
             user: {
                 id: user.id,
-                username: user.username
+                username: user.username,
+                roles: user.roles
             }
         })
     } catch(e) {
@@ -56,9 +61,12 @@ router.post('/auth/signup', async (req, res, next) => {
 router.get('/auth/get-user', authenticate, async (req, res, next) => {
     const user = await User.query().findById(req.token.id)
 
+    user.roles = await user.getRoles()
+
     res.json({
         id: user.id,
-        username: user.username
+        username: user.username,
+        roles: user.roles
     })
 })
 
