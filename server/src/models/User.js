@@ -2,9 +2,15 @@ import { Model } from 'objection'
 import Role from './Role'
 import Track from './Track'
 
+import { verify } from '../services/auth'
+
 class User extends Model {
-    authenticated(password) {
-        return this.password === password
+    async authenticated(password) {
+		try {
+			return await verify(password, this.password)
+		} catch(e) {
+			return false
+		}
     }
 
     async getRoles() {

@@ -5,14 +5,17 @@
             <div class="card signup-form">
                 <div class="card-content">
                     <h2 class="title has-text-centered">Signup</h2>
+                    <b-field label="Email">
+                        <b-input v-model="form.email" type="email" />
+                    </b-field>
                     <b-field label="Username">
-                        <b-input v-model="username" />
+                        <b-input v-model="form.username" />
                     </b-field>
                     <b-field label="Password">
-                        <b-input v-model="password" type="password" />
+                        <b-input v-model="form.password" type="password" />
                     </b-field>
                     <b-field label="Confirm Password">
-                        <b-input v-model="password_confirmation" type="password" />
+                        <b-input v-model="form.password_confirmation" type="password" />
                     </b-field>
                     <b-field>
                         <div class="level">
@@ -38,14 +41,23 @@ export default {
 	name: 'Signup',
     data() {
         return {
-            username: '',
-            password: '',
-            password_confirmation: ''
+			form: {
+				email: '',
+				username: '',
+				password: '',
+				password_confirmation: ''
+			}
         }
     },
     methods: {
-        submitSignup() {
-            console.log(this.username, this.password, this.password_confirmation)
+        async submitSignup() {
+			try {
+				await this.$store.dispatch('signup', this.form)
+
+				this.$router.push({ name: 'Home' })
+			} catch(e) {
+				console.log(e.message)
+			}
         }
     },
 	components: {

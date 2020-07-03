@@ -49,9 +49,14 @@ const actions = {
     async logout({ commit }) {
         removeToken()
         commit('AUTH_LOGOUT')
-    },
-    async signUp() {
-    },
+	},
+	async signup(context, signupData) {
+		try {
+			await post('/auth/signup', signupData)
+		} catch(e) {
+			throw new ApiError(e.status, e.message)
+		}
+	},
     async verifyToken({ commit }) {
         try {
             const user = await get('/auth/get-user')
