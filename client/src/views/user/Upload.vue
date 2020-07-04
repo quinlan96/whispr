@@ -1,24 +1,20 @@
 <template>
-    <div>
-        <Navbar />
+    <Layout>
         <div class="container">
             <h1 class="title">Upload</h1>
             <UploadForm />
         </div>
-        <Footer />
-    </div>
+    </Layout>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import Layout from '@/components/layout/Layout'
 import UploadForm from '@/components/upload/UploadForm'
 
 export default {
     name: 'Upload',
     components: {
-        Navbar,
-        Footer,
+        Layout,
         UploadForm
     }
 }

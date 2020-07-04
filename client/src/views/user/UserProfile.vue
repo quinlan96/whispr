@@ -1,11 +1,16 @@
 <template>
-	<div>
-	</div>
+	<Layout>
+	</Layout>
 </template>
 
 <script>
+import Layout from '@/components/layout/Layout.vue'
+
 export default {
-	name: 'UserProfile'
+	name: 'UserProfile',
+    components: {
+        Layout
+    }
 }
 </script>
 

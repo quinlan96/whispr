@@ -4,11 +4,12 @@ import createError from 'http-errors'
 import { getUnixTime, addHours, addDays } from 'date-fns'
 
 import authenticate from '../../middleware/auth'
-import { hash, verify } from '../../services/auth'
+import { hash, validatePasswords } from '../../services/auth'
 import { JWT_SECRET } from '../../constants'
 
 import User from '../../models/User'
 import Role from '../../models/Role'
+import ApiError from '../../utils/errors/ApiError'
 
 const router = express.Router()
 
@@ -59,26 +60,42 @@ router.post('/auth/login', async (req, res, next) => {
 })
 
 router.post('/auth/signup', async (req, res, next) => {
-	const roles = await Role.query().whereIn('name', ['USER'])
+    const form = req.body
+    const defaultRoles = ['USER']
+
+    const roles = await Role.query().whereIn('name', defaultRoles)
 
 	if(!roles.length) {
-		next(createError(500, 'The default roles cannot be assigned'))
-	}
+		return next(createError(500, 'User could not be created (default roles not found)'))
+    }
 
-    const user = await User.query().insertGraph({
-		email: req.body.email,
-		username: req.body.username,
-		password: await hash(req.body.password),
-		active: true
-	})
+    try {
+        const password = validatePasswords(form.password, form.passwordConfirmation)
+        
+        const hashed = await hash(password)
+            .catch(e => ApiError(500, e.message))
 
-	user.$relatedQuery('roles').relate(roles)
+        const user = await User.query().insertGraph({
+            email: form.email,
+            username: form.username,
+            password: hashed,
+            active: true
+        }).catch(e => ApiError(500, 'User could not be created'))
 
-    res.json(user)
+        user.$relatedQuery('roles').relate(roles)
+
+        res.json(user)
+    } catch(e) {
+        return next(createError(e.status, e.message))
+    }
 })
 
 router.get('/auth/get-user', authenticate, async (req, res, next) => {
     const user = await User.query().findById(req.token.id)
+
+    if(!user) {
+        return next(createError(401, 'User not found'))
+    }
 
     user.roles = await user.getRoles()
 
@@ -87,16 +104,6 @@ router.get('/auth/get-user', authenticate, async (req, res, next) => {
         username: user.username,
         roles: user.roles
     })
-})
-
-router.get('/auth/test', async (req, res, next) => {
-	try {
-		const hashed = await hash('asdf')
-
-		console.log(await verify('asdf', hashed))
-	} catch(e) {
-		console.log(e.message)
-	}
 })
 
 export default router

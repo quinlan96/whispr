@@ -1,19 +1,18 @@
 <template>
-	<div>
-        <Navbar />
+	<Layout>
         <div class="container">
             <div class="card login-form">
                 <div class="card-content">
                     <h2 class="title has-text-centered">Login</h2>
                     <form @submit="handleLogin">
                         <b-field label="Username">
-                            <b-input v-model="username" required />
+                            <b-input v-model="form.username" required />
                         </b-field>
                         <b-field label="Password">
-                            <b-input v-model="password" type="password" required />
+                            <b-input v-model="form.password" type="password" required />
                         </b-field>
                         <b-field>
-                            <b-checkbox v-model="rememberMe" class="is-unselectable">Remember me</b-checkbox>
+                            <b-checkbox v-model="form.rememberMe" class="is-unselectable">Remember me</b-checkbox>
                         </b-field>
                         <b-notification :active="error !== ''" type="is-danger" @close="closeError">
                             {{ error }}
@@ -31,23 +30,23 @@
                 </div>
             </div>
         </div>
-        <Footer />
-	</div>
+	</Layout>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 
-import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import Layout from '@/components/layout/Layout.vue'
 
 export default {
 	name: 'Login',
     data() {
         return {
-            username: '',
-            password: '',
-            rememberMe: false,
+            form: {
+                username: '',
+                password: '',
+                rememberMe: false
+            },
             error: ''
         }
     },
@@ -61,11 +60,7 @@ export default {
             this.error = ''
 
             try {
-                this.$store.dispatch('login', {
-                    username: this.username,
-                    password: this.password,
-                    rememberMe: this.rememberMe
-                })
+                await this.$store.dispatch('login', this.form)
 
                 this.$router.push({ name: 'Home' })
             } catch (e) {
@@ -82,8 +77,7 @@ export default {
         }
     },
 	components: {
-		Navbar,
-		Footer
+		Layout
 	}
 }
 </script>
@@ -97,6 +91,11 @@ export default {
     @include desktop {
         width: 30rem;
     } 
+}
+
+.notification {
+    margin-bottom: 1rem;
+    padding: .5rem 1rem;
 }
 
 </style>

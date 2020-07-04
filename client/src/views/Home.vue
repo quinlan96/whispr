@@ -1,16 +1,13 @@
 <template>
-	<div class="home">
-		<Navbar />
+    <Layout>
 		<div class="container">
 			<TrackList :tracks="tracks" />
 		</div>
-		<Footer />
-	</div>
+    </Layout>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import Layout from '@/components/layout/Layout.vue'
 import TrackList from '@/components/tracks/TrackList.vue'
 import { get } from '@/services/api'
 
@@ -25,8 +22,7 @@ export default {
 		this.tracks = await get('/tracks')
 	},
 	components: {
-		Navbar,
-		Footer,
+        Layout,
 		TrackList
 	}
 }

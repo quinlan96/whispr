@@ -1,6 +1,15 @@
 import crypto from 'crypto'
+import ApiError from '../../utils/errors/ApiError'
 
 const SALT_LENGTH = 8
+
+const validatePasswords = (password1, password2) => {
+    if(password1 !== password2) {
+        throw new ApiError(400, 'Passwords do not match')
+    }
+
+    return password1
+}
 
 const hash = async (password) => {
     return new Promise((resolve, reject) => {
@@ -32,5 +41,6 @@ const verify = async (password, hash) => {
 
 export {
 	hash,
-	verify
+    verify,
+    validatePasswords
 }

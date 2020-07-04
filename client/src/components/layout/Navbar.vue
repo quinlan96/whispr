@@ -2,7 +2,7 @@
 	<b-navbar>
 		<template slot="brand">
 			<b-navbar-item tag="router-link" :to="{ name: 'Home' }">
-                <img class="navbar-logo" src="../assets/images/logo.svg" />
+                <img class="navbar-logo" src="../../assets/images/logo.svg" />
                 <span class="navbar-title has-text-white">ThisWeeksSponsor</span>
 			</b-navbar-item>
 		</template>
@@ -48,15 +48,19 @@ export default {
         }
     },
     async created() {
-        if(this.loggedIn && !this.user.id) {
-            await this.$store.dispatch('verifyToken')
+        if(this.loggedIn && this.token && !this.user.id) {
+            try {
+                await this.$store.dispatch('verifyToken')
+            } catch(e) {
+                await this.$store.dispatch('logout')
+            }
         }
     }
 }
 </script>
 
 <style scoped lang="scss">
-@import "../assets/scss/_variables";
+@import "../../assets/scss/_variables";
 
 .navbar-logo {
     display: block;

@@ -1,13 +1,18 @@
 <template>
     <div>
         <h1 class="title">Latest Tracks</h1>
-		<Track
-			v-for="track in tracks"
-			:key="track.id"
-			:track="track"
-			:currentTrack="playing"
-			@update-track="updatePlaying"
-		/>
+        <div v-if="tracks.length">
+            <Track
+                v-for="track in tracks"
+                :key="track.id"
+                :track="track"
+                :currentTrack="playing"
+                @update-track="updatePlaying"
+            />
+        </div>
+        <div v-else class="has-text-centered">
+            <span>No tracks found</span>
+        </div>
     </div>
 </template>
 
