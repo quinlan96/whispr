@@ -10,17 +10,25 @@ const mutations = {
     ALERTS_ADD(state, alert) {
         state.alerts.push(alert)
     },
+    ALERTS_REMOVE(state, index) {
+        if(index > -1) {
+            state.alerts.splice(index, 1)
+        }
+    },
     ALERTS_REMOVE_ALL(state) {
         state.alerts = []
     }
 }
 
 const actions = {
-    async addAlert({ commit }, alert) {
+    addAlert({ commit }, alert) {
         commit('ALERTS_ADD', alert)
     },
-    async clearAlerts({ commit }) {
-        commit('')
+    removeAlert({ commit}, index) {
+        commit('ALERTS_REMOVE', index)
+    },
+    clearAlerts({ commit }) {
+        commit('ALERTS_REMOVE_ALL')
     }
 }
 

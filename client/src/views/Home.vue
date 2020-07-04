@@ -1,6 +1,6 @@
 <template>
     <Layout>
-		<div class="container">
+		<div class="container tracklist">
 			<TrackList :tracks="tracks" />
 		</div>
     </Layout>
@@ -27,3 +27,9 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.tracklist {
+    margin-top: 1.5rem;
+}
+</style>

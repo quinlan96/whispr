@@ -13,10 +13,6 @@ class User extends Model {
 		}
     }
 
-    async getRoles() {
-        return await (await this.$relatedQuery('roles')).map(role => role.name)
-    }
-
     static get tableName() {
         return 'users'
 	}

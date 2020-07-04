@@ -21,7 +21,7 @@
                     <b-icon pack="fas" icon="user-circle" size="is-small"></b-icon>
                     <span style="margin-left: .5rem;">{{ user.username }}</span>
                 </template>
-                <b-navbar-item tag="router-link" :to="{ name: 'User' }">
+                <b-navbar-item tag="router-link" :to="{ name: 'User', params: { user: user.username } }">
                     Profile
                 </b-navbar-item>
                 <b-navbar-item type="is-text" @click="handleLogout">

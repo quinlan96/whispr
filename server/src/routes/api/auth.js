@@ -31,8 +31,8 @@ router.post('/auth/login', async (req, res, next) => {
 
     if(!user || !(await user.authenticated(password))) {
         return next(createError(401, 'Username and password do not match'))
-	}
-	
+    }
+    
     let expiryAt = getUnixTime(addHours(new Date(), 1))
 
     if(rememberMe) {
@@ -43,7 +43,7 @@ router.post('/auth/login', async (req, res, next) => {
         const accessToken = jwt.sign({
             id: user.id,
             username: user.username,
-            expiry_at: expiryAt
+            expiryAt: expiryAt
         }, JWT_SECRET)
 
         res.json({
@@ -51,7 +51,7 @@ router.post('/auth/login', async (req, res, next) => {
             user: {
                 id: user.id,
                 username: user.username,
-                roles: user.roles
+                roles: user.roles.map(role => role.name)
             }
         })
     } catch(e) {
@@ -82,7 +82,10 @@ router.post('/auth/signup', async (req, res, next) => {
             active: true
         }).catch(e => ApiError(500, 'User could not be created'))
 
-        user.$relatedQuery('roles').relate(roles)
+        console.log(roles)
+        console.log(roles.map(role => role.id))
+
+        await user.$relatedQuery('roles').relate(roles)
 
         res.json(user)
     } catch(e) {
@@ -91,18 +94,23 @@ router.post('/auth/signup', async (req, res, next) => {
 })
 
 router.get('/auth/get-user', authenticate, async (req, res, next) => {
-    const user = await User.query().findById(req.token.id)
+    const user = await User
+        .query()
+        .where({
+			id: req.token.id,
+			active: true
+		})
+        .first()
+		.withGraphFetched('roles')
 
     if(!user) {
         return next(createError(401, 'User not found'))
     }
 
-    user.roles = await user.getRoles()
-
     res.json({
         id: user.id,
         username: user.username,
-        roles: user.roles
+        roles: user.roles.map(role => role.name)
     })
 })
 

@@ -57,11 +57,13 @@ router.get('/tracks', async (req, res, next) => {
 router.post('/tracks', authenticate, async (req, res, next) => {
     const userId = req.token.id
 
+    const status = "UNLISTED"
+
     const track = await Track.query().insertGraph({
         id: req.body.id,
         title: req.body.title,
         description: req.body.description,
-        is_private: req.body.isPrivate
+        status: status
     })
 	
 	await track.$relatedQuery('user').relate(userId)
@@ -80,7 +82,9 @@ router.get('/tracks/:id', async (req, res, next) => {
 })
 
 router.get('/tracks/:id/:file', async (req, res, next) => {
-	const { id, file } = req.params
+    const { id, file } = req.params
+    
+    const status = "UPLOADING"
 
 	const track = await Track.query().findById(id)
 

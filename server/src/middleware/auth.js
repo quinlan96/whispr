@@ -17,7 +17,7 @@ const authenticate = (req, res, next) => {
             return next(createError(403, 'Token verification failed'));
         }
 
-        if(compareAsc(new Date(), fromUnixTime(token.expiry_at)) === 1) {
+        if(compareAsc(new Date(), fromUnixTime(token.expiryAt)) === 1) {
             return next(createError(403, 'Token expired'));
         }
 

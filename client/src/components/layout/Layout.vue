@@ -21,8 +21,6 @@ export default {
     computed: {
         ...mapGetters(['alerts'])
     },
-    created() {
-    },
 	components: {
 		Navbar,
 		Footer,
