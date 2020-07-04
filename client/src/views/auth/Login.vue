@@ -62,6 +62,11 @@ export default {
             try {
                 await this.$store.dispatch('login', this.form)
 
+				await this.$store.dispatch('addAlert', {
+					type: 'success',
+					message: 'Logged in successfully'
+				})
+
                 this.$router.push({ name: 'Home' })
             } catch (e) {
                 this.error = e.message
@@ -71,7 +76,7 @@ export default {
             this.error = ''
         }
     },
-    created() {
+    async created() {
         if(this.loggedIn) {
             this.$router.push({ name: 'Home' })
         }

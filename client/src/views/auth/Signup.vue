@@ -113,11 +113,6 @@ export default {
         }
     },
     async created() {
-        await this.$store.dispatch('addAlert', {
-            type: 'success',
-            message: 'User created successfully'
-        })
-
         if(this.loggedIn) {
             this.$router.push({ name: 'Home' })
         }

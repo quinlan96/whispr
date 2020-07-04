@@ -2,7 +2,7 @@
 	<div class="layout">
 		<Navbar />
         <div v-if="alerts.length" class="container">
-            <Alerts :alerts="alerts.alerts" />
+            <Alerts :alerts="alerts" />
         </div>
         <slot></slot>
 		<Footer />
@@ -12,8 +12,9 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import Navbar from '@/components/layout/Navbar.vue'
-import Footer from '@/components/layout/Footer.vue'
+import Navbar from './Navbar.vue'
+import Footer from './Footer.vue'
+import Alerts from './alerts/Alerts.vue'
 
 export default {
 	name: 'Layout',
@@ -24,7 +25,8 @@ export default {
     },
 	components: {
 		Navbar,
-		Footer
+		Footer,
+		Alerts
 	}
 }
 </script>
