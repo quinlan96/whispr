@@ -57,16 +57,15 @@ router.get('/tracks', async (req, res, next) => {
 router.post('/tracks', authenticate, async (req, res, next) => {
     const userId = req.token.id
 
-    const status = "UNLISTED"
+    const status = "DISABLED"
 
     const track = await Track.query().insertGraph({
-        id: req.body.id,
+		id: req.body.id,
+		user_id: userId,
         title: req.body.title,
         description: req.body.description,
         status: status
     })
-	
-	await track.$relatedQuery('user').relate(userId)
     
     res.json(track)
 }) 
@@ -84,8 +83,6 @@ router.get('/tracks/:id', async (req, res, next) => {
 router.get('/tracks/:id/:file', async (req, res, next) => {
     const { id, file } = req.params
     
-    const status = "UPLOADING"
-
 	const track = await Track.query().findById(id)
 
 	if(!track) {
@@ -95,7 +92,7 @@ router.get('/tracks/:id/:file', async (req, res, next) => {
 	if(track.file !== file) {
 		return next(createError(404, 'Track file not found'))
 	}
-	
+
 	res.sendFile(track.getTrackFile())
 })
 
@@ -129,9 +126,10 @@ router.post('/tracks/:id/upload-track', async (req, res, next) => {
         console.log(e.message)
     }
 
-    track = await Track.query().patchAndFetchById(track.id, {
+    track = await track.query().patchAndFetch({
         file: filename,
-        original_file: file.name
+		original_file: file.name,
+		status: "ENABLED"
     })
 
     res.json({})
