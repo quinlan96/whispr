@@ -109,7 +109,6 @@ router.post('/tracks/:id/upload-track', async (req, res, next) => {
 
     audioContext.decodeAudioData(file.data, async (audioBuffer) => {
         const waveform = normalizeData(generateWaveform(audioBuffer))
-        console.log(waveform)
 
         await track.$query().patch({
             waveform: JSON.stringify(waveform)
@@ -126,7 +125,7 @@ router.post('/tracks/:id/upload-track', async (req, res, next) => {
         console.log(e.message)
     }
 
-    track = await track.query().patchAndFetch({
+    track = await track.$query().patchAndFetch({
         file: filename,
 		original_file: file.name,
 		status: "ENABLED"

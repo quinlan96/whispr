@@ -1,9 +1,9 @@
 <template>
     <b-notification
         :type="`is-${alert.type}`"
-        auto-close
         :duration="5000"
         animation="fade"
+        auto-close
         @close="handleClose"
     >
         {{ alert.message }}

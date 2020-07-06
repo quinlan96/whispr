@@ -1,5 +1,10 @@
 // Overrides
 
+.icon svg {
+    width: auto;
+    height: auto;
+}
+
 .hero {
     background-color: $black-ter;
 }
