@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/views/auth/Login.vue'
 import Signup from '@/views/auth/Signup.vue'
-import UserProfile from '@/views/user/UserProfile'
+import User from '@/views/user/User'
 import Upload from '@/views/user/Upload'
 
 import store from '@/store'
@@ -29,7 +29,7 @@ const routes = [
 	{
 		path: '/u/:user',
 		name: 'User',
-		component: UserProfile
+		component: User
     },
     {
         path: '/upload',

@@ -5,6 +5,7 @@
 			:width="width"
 			:height="height"
 			@click="onClick"
+			@mousedown="onMouseDown"
 			@mousemove="onMouseMove"
 			@mouseleave="onMouseLeave"
 		>
@@ -15,7 +16,7 @@
 <script>
 import variables from '@/assets/scss/_variables.scss'
 import mix from '@/utils/mix'
-import { BAR_WIDTH, BAR_GAP } from '@/constants'
+import { BAR_WIDTH, BAR_GAP, TRACK_BARS } from '@/constants'
 
 export default {
 	name: 'Waveform',
@@ -24,11 +25,13 @@ export default {
         'data'
 	],
 	data() {
+		const width = TRACK_BARS * (BAR_WIDTH + BAR_GAP)
+
 		return {
 			context: null,
-			width: 800,
+			width: width,
 			height: 60,
-			bars: 160,
+			bars: TRACK_BARS,
 			seek: null
 		}
 	},
@@ -46,8 +49,10 @@ export default {
 			this.data.map((length, index) => this.drawBar(index, length))
 		},
 		drawBar(index, length) {
-			this.drawRoundedLine(index, length * (this.height * (2 / 3)))
-			this.drawRoundedLine(index, length * (this.height * (2 / 3)), true)
+			const height = length * ((this.height - 2) * (2 / 3))
+
+			this.drawRoundedLine(index, height)
+			this.drawRoundedLine(index, height, true)
 
 		},
 		calculateColor(index, reverse) {
@@ -127,6 +132,21 @@ export default {
 			const progress = x / this.width
 
 			this.$emit('set-progress', progress)
+		},
+		onMouseDown(e) {
+			const rect = e.target.getBoundingClientRect() 
+
+			document.onmouseup = () => {
+				document.onmouseup = null
+				document.onmousemove = null
+			}
+
+			document.onmousemove = (e1) => {
+				const x = e1.clientX - rect.left
+				const progress = x / this.width
+
+				this.$emit('set-progress', progress)
+			}
 		},
 		onMouseMove(e) {
 			const rect = e.target.getBoundingClientRect()

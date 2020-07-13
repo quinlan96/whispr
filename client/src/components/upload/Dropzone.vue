@@ -97,8 +97,15 @@ export default {
                 })
             })
         },
-        queueComplete(response) {
-            console.log("BIIIIITCH" + response)
+        async queueComplete(response) {
+			await this.$store.dispatch('addAlert', {
+				type: 'success',
+				message: 'Track added successfully' 
+			})
+
+			console.log(response)
+
+			this.$router.push({ name: 'Track' })
         },
         uploadProgress(progress) {
             const progressElement = this.$refs.dropzone.$refs.dropzoneElement.querySelectorAll('.dz-preview progress')

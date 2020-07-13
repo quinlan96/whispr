@@ -1,18 +1,18 @@
 import express from 'express'
 import createError from 'http-errors'
+import AudioContext from 'web-audio-api'
+import fs from 'fs'
+
+import { STORAGE_DIR, TRACK_BARS } from '../../constants'
 import authenticate from '../../middleware/auth'
 
-import { STORAGE_DIR } from '../../constants'
-
 import Track from '../../models/Track'
-
-import AudioContext from 'web-audio-api'
 
 const router = express.Router()
 
 const generateWaveform = (audioBuffer) => {
     const rawData = audioBuffer.getChannelData(0)
-    const samples = 160
+    const samples = TRACK_BARS
     const blockSize = Math.floor(rawData.length / samples)
     const filteredData = []
 
@@ -22,10 +22,10 @@ const generateWaveform = (audioBuffer) => {
 
         for(let j = 0; j < blockSize; j++) {
             sum += Math.abs(rawData[blockStart + j])
-        }
+		}
 
         filteredData.push(sum / blockSize)
-    }
+	}
 
     return filteredData
 }
@@ -68,7 +68,33 @@ router.post('/tracks', authenticate, async (req, res, next) => {
     })
     
     res.json(track)
-}) 
+})
+
+router.post('/tracks/generate-waveform', authenticate, async (req, res, next) => {
+	const tracks = await Track.query()
+
+	const audioContext = new AudioContext.AudioContext()
+
+	await Promise.all(await tracks.map((track) => {
+		const data = fs.readFileSync(track.getTrackFile())
+
+		audioContext.decodeAudioData(data, async (audioBuffer) => {
+			const waveform = normalizeData(generateWaveform(audioBuffer))
+
+			console.log(waveform)
+
+			await track.$query().patch({
+				waveform: JSON.stringify(waveform)
+			})
+		}, (err) => {
+			console.log(err)
+		})
+	}))
+
+	res.json({
+		numUpdated: tracks.length
+	})
+})
 
 router.get('/tracks/:id', async (req, res, next) => {
     const track = await Track.query().findById(req.body.id)

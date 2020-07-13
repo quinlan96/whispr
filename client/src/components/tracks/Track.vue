@@ -1,13 +1,18 @@
 <template>
 	<div class="track box">
 		<div class="media">
-			<div class="player-controls media-left has-text-centered">
-				<span class="player-play" @click="toggleTrack">
-                    <b-icon :icon="playing ? 'pause-circle' : 'play-circle'" size="is-large" class="player-play-icon"></b-icon>
-				</span>
-				<span class="player-timecode">{{ formatTime(currentTime) }}/{{ formatTime(duration) }}</span>
+			<div class="track-controls media-left has-text-centered">
+				<div class="track-icons">
+					<span class="track-play" @click="toggleTrack">
+						<b-icon class="track-play-icon" :icon="playing ? 'pause-circle' : 'play-circle'" size="is-large"></b-icon>
+					</span>
+					<span class="track-stop" @click="stopTrack">
+						<b-icon class="track-stop-icon" icon="stop-circle" size="is-medium"></b-icon>
+					</span>
+				</div>
+				<span class="track-timecode">{{ formatTime(currentTime) }}/{{ formatTime(duration) }}</span>
 			</div>
-			<div class="media-content">
+			<div class="media-content track-content">
 				<div class="content">
 					<div class="track-info">
 						<div class="track-more-info">
@@ -22,6 +27,19 @@
 						:progress="currentTime / duration"
 						@set-progress="setProgress"
 					/>
+				</div>
+				<div class="level track-social">
+					<div class="level-left">
+						<div class="level-item">
+							<b-button class="track-social-icons" type="is-light" icon-left="comment" size="is-small" outlined> Comment</b-button>
+						</div>
+						<div class="level-item">
+							<b-button class="track-social-icons" type="is-light" icon-left="heart" size="is-small" outlined> Like</b-button>
+						</div>
+						<div class="level-item">
+							<b-button class="track-social-icons" type="is-light" icon-left="share" size="is-small" outlined> Share</b-button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -66,6 +84,10 @@ export default {
         pauseTrack() {
             this.$refs.audio.pause()
         },
+		stopTrack() {
+			this.pauseTrack()
+			this.$refs.audio.currentTime = 0
+		},
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
 		},
@@ -109,8 +131,14 @@ export default {
 	padding: 1rem;
 	line-height: 1.1;
 
+	.media {
+		align-items: stretch;
+	}
+
 	.track-info {
 		display: flex;
+		height: 100%;
+		margin-bottom: .5rem;
 
 		.track-more-info {
 			flex-grow: 1;
@@ -128,22 +156,39 @@ export default {
 	}
 }
 
-.player-controls {
-	padding: .5rem 0;
-    width: 100px;
+.track-controls {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	width: 5rem;
 
-    .player-play {
-        display: block;
+	.track-icons {
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		justify-content: center;
+	
+		.track-play {
+			.track-play-icon {
+				cursor: pointer;
+				width: 3.5rem;
+				height: 3.5rem;
+				font-size: 3.5rem;
+			}
+		}
 
-        .player-play-icon {
-            cursor: pointer;
-        }
-    }
+		.track-stop {
+			.track-stop-icon {
+				cursor: pointer;
+			}
+		}
+	}
 
-    .player-timecode {
+    .track-timecode {
         display: block;
         font-size: .94rem;
-        margin-top: .75rem;
+		padding: .3rem 0;
     }
 }
 </style>

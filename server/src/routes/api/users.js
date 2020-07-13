@@ -26,7 +26,7 @@ router.post('/users', async (req, res, next) => {
 })
 
 router.get('/users/:id', async (req, res, next) => {
-    const user = await User.query().findById(req.body.id)
+    const user = await User.query().findById(req.params.id)
 
     if(!user) {
         return next(createError(404, 'User not found'))
@@ -49,6 +49,12 @@ router.delete('/users/:id', async (req, res, next) => {
     res.json({
         numDeleted: numDeleted
     })
+})
+
+router.get('/users/:id/tracks', async (req, res, next) => {
+
+	console.log(req.params)
+
 })
 
 export default router

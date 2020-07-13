@@ -8,3 +8,4 @@ export const DB_USERNAME = process.env.DB_USERNAME
 export const DB_PASSWORD = process.env.DB_PASSWORD
 export const DB_DATABASE = process.env.DB_DATABASE
 export const STORAGE_DIR = BASE_DIR + '/storage/tracks'
+export const TRACK_BARS = process.env.TRACK_BARS
