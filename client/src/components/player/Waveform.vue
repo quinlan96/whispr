@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<canvas
+            class="waveform"
 			ref="canvas"
 			:width="width"
 			:height="height"
@@ -134,11 +135,15 @@ export default {
 			this.$emit('set-progress', progress)
 		},
 		onMouseDown(e) {
-			const rect = e.target.getBoundingClientRect() 
+			const rect = e.target.getBoundingClientRect()
+
+            this.$emit('pause-track')
 
 			document.onmouseup = () => {
 				document.onmouseup = null
 				document.onmousemove = null
+
+                this.$emit('play-track')
 			}
 
 			document.onmousemove = (e1) => {
@@ -170,4 +175,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+canvas.waveform {
+    cursor: pointer;
+}
 </style>

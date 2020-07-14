@@ -13,7 +13,19 @@ class Track extends Model {
 
 	getTrackFile() {
 		return `${STORAGE_DIR}/${this.id}/${this.file}`
-	}
+    }
+
+    getPublicJson() {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            trackUrl: this.getTrackUrl(),
+            waveform: this.waveform,
+            status: this.status,
+            createdAt: this.created_at
+        }
+    }
 	
 	static get relationMappings() {
 		return {
@@ -24,7 +36,19 @@ class Track extends Model {
 					from: 'users.id',
 					to: 'tracks.user_id'
 				}
-			}
+            },
+            likes: {
+                relation: Model.ManyToManyRelation,
+                modelClass: User,
+                join: {
+                    from: 'tracks.id',
+                    through: {
+                        from: 'track_likes.track_id',
+                        to: 'track_likes.user_id'
+                    },
+                    to: 'users.id'
+                }
+            }
 		}
 	}
 

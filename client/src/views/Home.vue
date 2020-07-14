@@ -1,6 +1,7 @@
 <template>
     <Layout>
 		<div class="container tracklist">
+            <h1 class="title">Latest Tracks</h1>
 			<TrackList :tracks="tracks" />
 		</div>
     </Layout>

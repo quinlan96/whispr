@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h1 class="title">Latest Tracks</h1>
         <div v-if="tracks.length">
             <Track
                 v-for="track in tracks"

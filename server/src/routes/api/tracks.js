@@ -1,55 +1,26 @@
 import express from 'express'
 import createError from 'http-errors'
-import AudioContext from 'web-audio-api'
 import fs from 'fs'
 
-import { STORAGE_DIR, TRACK_BARS } from '../../constants'
 import authenticate from '../../middleware/auth'
+import { generateWaveform } from '../../services/waveform'
+import { STORAGE_DIR } from '../../constants'
 
 import Track from '../../models/Track'
 
 const router = express.Router()
 
-const generateWaveform = (audioBuffer) => {
-    const rawData = audioBuffer.getChannelData(0)
-    const samples = TRACK_BARS
-    const blockSize = Math.floor(rawData.length / samples)
-    const filteredData = []
-
-    for(let i = 0; i < samples; i++) {
-        let blockStart = blockSize * i
-        let sum = 0
-
-        for(let j = 0; j < blockSize; j++) {
-            sum += Math.abs(rawData[blockStart + j])
-		}
-
-        filteredData.push(sum / blockSize)
-	}
-
-    return filteredData
-}
-
-const normalizeData = data => {
-    const multiplier = Math.pow(Math.max(...data), -1)
-
-    return data.map(n => n * multiplier)
-}
-
 router.get('/tracks', async (req, res, next) => {
-	const tracks = await Promise.all((await Track.query()).map(async (track) => {
-        const user = await track.$relatedQuery('user')
-
-		return {
-			id: track.id,
-            title: track.title,
-            description: track.description,
-            trackUrl: track.getTrackUrl(),
-            waveform: track.waveform,
-            user: user ? user.username : null,
-            posted: track.created_at
-		}
-	}))
+	/*const tracks = await Promise.all((await Track.query().withGraphFetched('likes')).map(async (track) => {
+        return track.getPublicJson()
+    }))*/
+    
+    const tracks = await Track.query().select(
+        'tracks.*',
+        Track.relatedQuery('likes')
+            .count()
+            .as('likes')
+    )
 
     res.json(tracks)
 })
@@ -64,31 +35,27 @@ router.post('/tracks', authenticate, async (req, res, next) => {
 		user_id: userId,
         title: req.body.title,
         description: req.body.description,
-        status: status
+        status: status,
     })
     
     res.json(track)
 })
 
-router.post('/tracks/generate-waveform', authenticate, async (req, res, next) => {
+router.post('/tracks/generate-waveforms', authenticate, async (req, res, next) => {
 	const tracks = await Track.query()
 
-	const audioContext = new AudioContext.AudioContext()
+	await Promise.all(await tracks.map(async (track) => {
+        try {
+            const file = fs.readFileSync(track.getTrackFile())
 
-	await Promise.all(await tracks.map((track) => {
-		const data = fs.readFileSync(track.getTrackFile())
+            const waveform = await generateWaveform(file)
 
-		audioContext.decodeAudioData(data, async (audioBuffer) => {
-			const waveform = normalizeData(generateWaveform(audioBuffer))
-
-			console.log(waveform)
-
-			await track.$query().patch({
-				waveform: JSON.stringify(waveform)
-			})
-		}, (err) => {
-			console.log(err)
-		})
+            await track.$query().patch({
+                waveform: JSON.stringify(waveform)
+            })
+        } catch(e) {
+            console.log(e.message)
+        }
 	}))
 
 	res.json({
@@ -97,9 +64,11 @@ router.post('/tracks/generate-waveform', authenticate, async (req, res, next) =>
 })
 
 router.get('/tracks/:id', async (req, res, next) => {
-    const track = await Track.query().findById(req.body.id)
+    const track = await Track
+        .query()
+        .findById(req.params.id)
 
-    if(!tracks) {
+    if(!track) {
         return next(createError(404, 'Track not found'))
     }
 
@@ -131,17 +100,15 @@ router.post('/tracks/:id/upload-track', async (req, res, next) => {
         return next(createError(404, 'Track not found'))
     }
 
-    const audioContext = new AudioContext.AudioContext()
-
-    audioContext.decodeAudioData(file.data, async (audioBuffer) => {
-        const waveform = normalizeData(generateWaveform(audioBuffer))
+    try {
+        const waveform = await generateWaveform(file.data)
 
         await track.$query().patch({
             waveform: JSON.stringify(waveform)
         })
-    }, (err) => {
-        console.log(err)
-    })
+    } catch(e) {
+        console.log(e)
+    }
 
     const filename = 'track.' + file.name.split('.').pop()
 

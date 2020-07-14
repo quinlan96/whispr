@@ -19,25 +19,27 @@
 							<span class="track-title"><strong>{{ track.title }}</strong></span>
 							<span class="track-user">{{ track.user }}</span>
 						</div>
-						<div class="track-posted">{{ track.posted | moment('from', 'now') }}</div>
+						<div class="track-created">{{ track.createdAt | moment('from', 'now') }}</div>
 					</div>
 					<audio ref="audio" :src="track.trackUrl" />
 					<Waveform
                         :data="track.waveform"
 						:progress="currentTime / duration"
 						@set-progress="setProgress"
+                        @play-track="playTrack"
+                        @pause-track="pauseTrack"
 					/>
 				</div>
 				<div class="level track-social">
 					<div class="level-left">
 						<div class="level-item">
-							<b-button class="track-social-icons" type="is-light" icon-left="comment" size="is-small" outlined> Comment</b-button>
+							<Like :track="track" />
 						</div>
 						<div class="level-item">
-							<b-button class="track-social-icons" type="is-light" icon-left="heart" size="is-small" outlined> Like</b-button>
+							<b-button class="track-social-icons" type="is-light" icon-left="comment" size="is-small" outlined>Comment</b-button>
 						</div>
 						<div class="level-item">
-							<b-button class="track-social-icons" type="is-light" icon-left="share" size="is-small" outlined> Share</b-button>
+							<b-button class="track-social-icons" type="is-light" icon-left="share" size="is-small" outlined>Share</b-button>
 						</div>
 					</div>
 				</div>
@@ -47,7 +49,8 @@
 </template>
 
 <script>
-import Waveform from '../player/Waveform.vue'
+import Waveform from '@/components/player/Waveform.vue'
+import Like from '@/components/tracks/actions/Like.vue'
 
 export default {
 	name: 'Track',
@@ -119,7 +122,8 @@ export default {
 		}
 	},
 	components: {
-		Waveform
+		Waveform,
+        Like
 	}
 }
 </script>
