@@ -2,6 +2,8 @@ import AudioContext from 'web-audio-api'
 import { TRACK_BARS } from '../../constants'
 
 const generateWaveform = (file) => {
+    console.log(TRACK_BARS)
+
     const audioContext = getContext()
 
     return new Promise((resolve, reject) => {

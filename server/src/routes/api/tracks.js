@@ -11,17 +11,10 @@ import Track from '../../models/Track'
 const router = express.Router()
 
 router.get('/tracks', async (req, res, next) => {
-	/*const tracks = await Promise.all((await Track.query().withGraphFetched('likes')).map(async (track) => {
+	const tracks = await Promise.all((await Track.getPublicTracks()).map(async (track) => {
         return track.getPublicJson()
-    }))*/
+    }))
     
-    const tracks = await Track.query().select(
-        'tracks.*',
-        Track.relatedQuery('likes')
-            .count()
-            .as('likes')
-    )
-
     res.json(tracks)
 })
 
@@ -89,6 +82,16 @@ router.get('/tracks/:id/:file', async (req, res, next) => {
 	}
 
 	res.sendFile(track.getTrackFile())
+})
+
+router.post('/tracks/:id/like', authenticate, async (req, res, next) => {
+    console.log(req.token)
+
+    const track = await Track.query().findById(req.params.id)
+
+    track.$relatedQuery('likes').relate(req.token.id)
+
+    res.json(await track.$query().withGraphFetched('user').withGraphFetched('likes'))
 })
 
 router.post('/tracks/:id/upload-track', async (req, res, next) => {

@@ -82,9 +82,6 @@ router.post('/auth/signup', async (req, res, next) => {
             active: true
         }).catch(e => ApiError(500, 'User could not be created'))
 
-        console.log(roles)
-        console.log(roles.map(role => role.id))
-
         await user.$relatedQuery('roles').relate(roles)
 
         res.json(user)

@@ -16,6 +16,9 @@ class Track extends Model {
     }
 
     getPublicJson() {
+
+        console.log(this.likes)
+
         return {
             id: this.id,
             title: this.title,
@@ -23,10 +26,27 @@ class Track extends Model {
             trackUrl: this.getTrackUrl(),
             waveform: this.waveform,
             status: this.status,
-            createdAt: this.created_at
+            createdAt: this.created_at,
+            username: this.user.username,
+            likes: this.likes.length
         }
     }
 	
+    $beforeInsert() {
+        this.created_at = new Date().toISOString()
+    }
+
+    $beforeUpdate() {
+        this.updated_at = new Date().toISOString()
+    }
+
+    static getPublicTracks() {
+        return this
+            .query()
+            .withGraphFetched('user')
+            .withGraphFetched('likes')
+    }
+
 	static get relationMappings() {
 		return {
 			user: {
@@ -51,14 +71,6 @@ class Track extends Model {
             }
 		}
 	}
-
-    $beforeInsert() {
-        this.created_at = new Date().toISOString()
-    }
-
-    $beforeUpdate() {
-        this.updated_at = new Date().toISOString()
-    }
 }
 
 export default Track

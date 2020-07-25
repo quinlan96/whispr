@@ -17,7 +17,7 @@
 					<div class="track-info">
 						<div class="track-more-info">
 							<span class="track-title"><strong>{{ track.title }}</strong></span>
-							<span class="track-user">{{ track.user }}</span>
+							<span class="track-user">{{ track.username }}</span>
 						</div>
 						<div class="track-created">{{ track.createdAt | moment('from', 'now') }}</div>
 					</div>
