@@ -1,13 +1,10 @@
-import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { compareAsc, fromUnixTime } from 'date-fns'
 import { JWT_SECRET } from '../constants'
 
-const authenticate = (req, res, next) => {
-    const authHeader = req.headers.authorization
-
+const token = (authorization) => {
     if(!authHeader) {
-        return next(createError(401, 'Authentication failed'))
+        return
     }
 
     const token = authHeader.split(' ')[1]
@@ -21,10 +18,8 @@ const authenticate = (req, res, next) => {
             return next(createError(403, 'Token expired'))
         }
 
-        req.token = token
+        return token
+    })
+}
 
-        return next()
-    });
-};
-
-export default authenticate
+export default token

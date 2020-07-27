@@ -15,9 +15,16 @@ class Track extends Model {
 		return `${STORAGE_DIR}/${this.id}/${this.file}`
     }
 
-    getPublicJson() {
+    getPublicJson(userId = null) {
+        const liked = false
 
-        console.log(this.likes)
+        if(userId && this.likes) {
+            const users = this.likes.filter(user => console.log(user))
+
+            if(users.length) {
+                liked = true
+            }
+        }
 
         return {
             id: this.id,
@@ -28,7 +35,8 @@ class Track extends Model {
             status: this.status,
             createdAt: this.created_at,
             username: this.user.username,
-            likes: this.likes.length
+            likes: this.likes.length,
+            liked: liked
         }
     }
 	
