@@ -16,10 +16,10 @@ class Track extends Model {
     }
 
     getPublicJson(userId = null) {
-        const liked = false
-
+		let liked = false
+		
         if(userId && this.likes) {
-            const users = this.likes.filter(user => console.log(user))
+			const users = this.likes.filter(user => user.id == userId)
 
             if(users.length) {
                 liked = true

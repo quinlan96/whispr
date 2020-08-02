@@ -8,19 +8,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import Layout from '@/components/layout/Layout.vue'
 import TrackList from '@/components/tracks/TrackList.vue'
 import { get } from '@/services/api'
 
 export default {
 	name: 'Home',
-	data() {
-		return {
-			tracks: []
-		}
+	computed: {
+		...mapGetters(['tracks'])
 	},
 	async mounted() {
-		this.tracks = await get('/tracks')
+		this.$store.dispatch('updateTracks', await get('/tracks'))
 	},
 	components: {
         Layout,

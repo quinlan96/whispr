@@ -4,6 +4,7 @@ import fs from 'fs'
 
 import authenticate from '../../middleware/auth'
 import { generateWaveform } from '../../services/waveform'
+import { decryptToken } from '../../services/token'
 import { STORAGE_DIR } from '../../constants'
 
 import Track from '../../models/Track'
@@ -11,11 +12,18 @@ import Track from '../../models/Track'
 const router = express.Router()
 
 router.get('/tracks', async (req, res, next) => {
+	let token = null
+
+	try {
+		token = decryptToken(req.headers.authorization)
+	} catch(e) {
+	}
+
 	const tracks = await Promise.all((await Track.getPublicTracks()).map(async (track) => {
-        return track.getPublicJson(req.token.id)
-    }))
-    
-    res.json(tracks)
+		return track.getPublicJson(token ? token.id : null)
+	}))
+	
+	res.json(tracks)
 })
 
 router.post('/tracks', authenticate, async (req, res, next) => {
@@ -87,9 +95,21 @@ router.get('/tracks/:id/:file', async (req, res, next) => {
 router.post('/tracks/:id/like', authenticate, async (req, res, next) => {
     const track = await Track.query().findById(req.params.id)
 
-    await track.$relatedQuery('likes').relate(req.token.id)
+	await track.$relatedQuery('likes').relate(req.token.id)
 
-    res.json(track)
+	const dick = await track.$query().withGraphFetched('user').withGraphFetched('likes')
+
+    res.json(dick.getPublicJson(req.token.id))
+})
+
+router.post('/tracks/:id/unlike', authenticate, async (req, res, next) => {
+	const track = await Track.query().findById(req.params.id)
+
+	await track.$relatedQuery('likes').unrelate().where('id', req.token.id)
+
+	const dick = await track.$query().withGraphFetched('user').withGraphFetched('likes')
+
+    res.json(dick.getPublicJson(req.token.id))
 })
 
 router.post('/tracks/:id/upload-track', async (req, res, next) => {

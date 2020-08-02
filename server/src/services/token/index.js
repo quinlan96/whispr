@@ -1,25 +1,28 @@
 import jwt from 'jsonwebtoken'
 import { compareAsc, fromUnixTime } from 'date-fns'
-import { JWT_SECRET } from '../constants'
+import { JWT_SECRET } from '../../constants'
+import ApiError from '../../utils/errors/ApiError'
 
-const token = (authorization) => {
-    if(!authHeader) {
-        return
+const decryptToken = (authorization) => {
+    if(!authorization) {
+		throw new ApiError(401, 'Authentication failed')
     }
 
-    const token = authHeader.split(' ')[1]
+    const token = authorization.split(' ')[1]
 
-    jwt.verify(token, JWT_SECRET, (err, token) => {
+    return jwt.verify(token, JWT_SECRET, (err, token) => {
         if(err) {
-            return next(createError(403, 'Token verification failed'))
+			throw new ApiError(403, 'Token verification failed')
         }
 
         if(compareAsc(new Date(), fromUnixTime(token.expiryAt)) === 1) {
-            return next(createError(403, 'Token expired'))
-        }
+			throw new ApiError(403, 'Token expired')
+		}
 
         return token
     })
 }
 
-export default token
+export {
+	decryptToken
+}

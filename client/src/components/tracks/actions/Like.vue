@@ -1,7 +1,6 @@
 <template>
     <b-button
-        class="track-social-icons"
-        type="is-light"
+        :type="track.liked ? 'is-primary' : 'is-light'"
         icon-left="heart"
         size="is-small"
         outlined
@@ -22,7 +21,13 @@ export default {
 	methods: {
         async handleLike() {
             try {
-                console.log(await post(`/tracks/${this.track.id}/like`))
+				const url = `/tracks/${this.track.id}/` + (this.track.liked ? 'unlike' : 'like')
+
+                const track = await post(url)
+
+				console.log(track)
+
+				this.$store.dispatch('updateTrack', track)
             } catch (e) {
                 console.log(e.message)
             }
@@ -34,4 +39,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../../../assets/scss/_variables.scss";
+
+.liked {
+	border-color: $primary;
+}
 </style>
