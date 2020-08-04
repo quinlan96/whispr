@@ -2,9 +2,7 @@ const state = {
     tracks: []
 }
 
-const getters = {
-    tracks: state => state.tracks
-}
+const getters = {}
 
 const mutations = {
     TRACKS_SET(state, tracks) {
@@ -13,11 +11,7 @@ const mutations = {
 	TRACK_SET(state, track) {
 		const index = state.tracks.findIndex(track => track.id == track.id)
 
-		track.title = "Dick"
-
-		state.tracks[index] = track
-
-		console.log(state)
+		Object.assign(state.tracks[index], track)
 	}
 }
 

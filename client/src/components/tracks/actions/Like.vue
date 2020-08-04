@@ -14,10 +14,10 @@
 import { post } from '@/services/api'
 
 export default {
-	name: 'Like',
-	props: [
-		'track'
-	],
+    name: 'Like',
+    props: [
+        'track'
+    ],
 	methods: {
         async handleLike() {
             try {

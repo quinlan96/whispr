@@ -6,6 +6,7 @@
         </div>
         <slot></slot>
 		<Footer />
+		<Player />
 	</div>
 </template>
 
@@ -16,6 +17,8 @@ import Navbar from './Navbar.vue'
 import Footer from './Footer.vue'
 import Alerts from './alerts/Alerts.vue'
 
+import Player from '@/components/player/Player.vue'
+
 export default {
 	name: 'Layout',
     computed: {
@@ -24,7 +27,8 @@ export default {
 	components: {
 		Navbar,
 		Footer,
-		Alerts
+		Alerts,
+		Player
 	}
 }
 </script>

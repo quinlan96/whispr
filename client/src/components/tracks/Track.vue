@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import Waveform from '@/components/player/Waveform.vue'
+import Waveform from '@/components/tracks/Waveform.vue'
 import Like from '@/components/tracks/actions/Like.vue'
 
 export default {
