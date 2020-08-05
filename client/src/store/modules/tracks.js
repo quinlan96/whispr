@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const state = {
     tracks: []
 }
@@ -11,7 +13,7 @@ const mutations = {
 	TRACK_SET(state, track) {
 		const index = state.tracks.findIndex(track => track.id == track.id)
 
-		Object.assign(state.tracks[index], track)
+		Vue.set(state.tracks, index, track)
 	}
 }
 

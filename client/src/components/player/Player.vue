@@ -2,22 +2,18 @@
 	<div class="player">
 		<div class="container">
 			<div class="player-controls">
-				<b-icon icon="step-backward"></b-icon>
+				<b-icon icon="undo"></b-icon>
 				<b-icon icon="play"></b-icon>
-				<b-icon icon="step-forward"></b-icon>
+				<b-icon icon="redo"></b-icon>
 			</div>
 			<div class="player-seek">
-				<b-slider class="seek-bar" type="is-primary is-small" v-model="seek" max="1000" rounded></b-slider>
+				<span>-:--</span>
+				<b-slider class="seek-bar" type="is-primary is-small" v-model="seek" :max="1000" :tooltip="false" rounded></b-slider>
+				<span>-:--</span>
 			</div>
-			<div class="fuck">
-				<b-dropdown position="is-top-left" hoverable>
-					<template slot="trigger">
-						<b-icon icon="volume-down"></b-icon>
-					</template>
-					<b-dropdown-item>
-						<b-slider v-model="volume"></b-slider>
-					</b-dropdown-item>
-				</b-dropdown>
+			<div class="volume-controls">
+				<b-icon class="volume-icon" icon="volume-down"></b-icon>
+				<b-slider class="volume-bar" type="is-primary is-small" v-model="volume" :tooltip="false" rounded></b-slider>
 			</div>
 		</div>
 	</div>
@@ -62,6 +58,25 @@ export default {
 		.player-seek {
 			flex-grow: 1;
 			margin: 0 1rem;
+			display: flex;
+			align-items: center;
+
+			.seek-bar {
+				margin: 0 1rem;
+			}
+		}
+
+		.volume-controls {
+			display: flex;
+			align-items: center;
+
+			.volume-icon {
+				margin-right: .5rem;
+			}
+
+			.volume-bar {
+				width: 5rem;
+			}
 		}
 	}
 }
