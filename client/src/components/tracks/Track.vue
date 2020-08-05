@@ -4,27 +4,27 @@
 			<div class="track-controls media-left has-text-centered">
 				<div class="track-icons">
 					<span class="track-play" @click="toggleTrack">
-						<b-icon class="track-play-icon" :icon="playing ? 'pause-circle' : 'play-circle'" size="is-large"></b-icon>
+						<b-icon class="track-play-icon" :icon="track.playing ? 'pause-circle' : 'play-circle'" size="is-large"></b-icon>
 					</span>
 					<span class="track-stop" @click="stopTrack">
 						<b-icon class="track-stop-icon" icon="stop-circle" size="is-medium"></b-icon>
 					</span>
 				</div>
-				<span class="track-timecode">{{ formatTime(currentTime) }}/{{ formatTime(duration) }}</span>
+				<span class="track-timecode">{{ formatTime(track.current) }}/{{ formatTime(track.data.duration) }}</span>
 			</div>
 			<div class="media-content track-content">
 				<div class="content">
 					<div class="track-info">
 						<div class="track-more-info">
-							<span class="track-title"><strong>{{ track.title }}</strong></span>
-							<span class="track-user">{{ track.username }}</span>
+							<span class="track-title"><strong>{{ track.data.title }}</strong></span>
+							<span class="track-user">{{ track.data.username }}</span>
 						</div>
 						<div class="track-created">{{ track.createdAt | moment('from', 'now') }}</div>
 					</div>
 					<audio ref="audio" :src="track.trackUrl" />
 					<Waveform
-                        :data="track.waveform"
-						:progress="currentTime / duration"
+                        :data="track.data.waveform"
+						:progress="track.current / track.data.duration"
 						@set-progress="setProgress"
                         @play-track="playTrack"
                         @pause-track="pauseTrack"
@@ -49,76 +49,48 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import Waveform from '@/components/tracks/Waveform.vue'
 import Like from '@/components/tracks/actions/Like.vue'
 
 export default {
 	name: 'Track',
 	props: [
-		'track',
-		'currentTrack'
+		'track'
 	],
-	data() {
-		return {
-			playing: false,
-			duration: 0,
-			currentTime: 0
-		}
-	},
-	watch: {
-		currentTrack: function(newVal) {
-			if(this.track.id != newVal) {
-				this.playing = false
-				this.$refs.audio.pause()
-			}
-		}
-	},
+	computed: mapState([
+		'player'
+	]),
 	methods: {
 		toggleTrack() {
-			if(this.playing) {
+			if(this.player.playing !== this.track.data.id) {
+				this.loadTrack()
+			}
+
+			if(this.track.playing) {
                 this.pauseTrack()
 			} else {
                 this.playTrack()
 			}
 		},
+		loadTrack() {
+			this.$store.dispatch('loadTrack', this.track)
+		},
         playTrack() {
-            this.$refs.audio.play()
+			this.$store.dispatch('playTrack', this.track.data.id)
         },
         pauseTrack() {
-            this.$refs.audio.pause()
+			this.$store.dispatch('pauseTrack', this.track.data.id)
         },
 		stopTrack() {
-			this.pauseTrack()
-			this.$refs.audio.currentTime = 0
+			this.$store.dispatch('stopTrack', 0)
 		},
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
 		},
 		setProgress(progress) {
-			this.$refs.audio.currentTime = (this.duration * progress)
-		}
-	},
-	mounted() {
-		this.$refs.audio.onloadedmetadata = () => {
-			this.duration = this.$refs.audio.duration
-		}
-		
-		this.$refs.audio.ontimeupdate = () => {
-			this.currentTime = this.$refs.audio.currentTime
-		}
-
-		this.$refs.audio.onplay = () => {
-			this.playing = true
-            this.$emit('update-track', this.track.id)
-		}
-
-		this.$refs.audio.onpause = () => {
-			this.playing = false
-            this.$emit('update-track', null)
-		}
-
-		this.$refs.audio.onended = () => {
-			this.playing = false
+			this.$store.dispatch('setProgress', progress)
 		}
 	},
 	components: {

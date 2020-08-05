@@ -7,9 +7,9 @@
 				<b-icon icon="redo"></b-icon>
 			</div>
 			<div class="player-seek">
-				<span>-:--</span>
+				<span>{{ formatTime(player.track.current) }}</span>
 				<b-slider class="seek-bar" type="is-primary is-small" v-model="seek" :max="1000" :tooltip="false" rounded></b-slider>
-				<span>-:--</span>
+				<span>{{ formatTime(player.track.data ? player.track.data.duration : '') }}</span>
 			</div>
 			<div class="volume-controls">
 				<b-icon class="volume-icon" icon="volume-down"></b-icon>
@@ -20,16 +20,41 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
 	name: 'Player',
-	props: [
-		'track'
-	],
+	computed: mapState([
+		'player'
+	]),
 	data() {
 		return {
 			seek: 0,
-			volume: 0
+			volume: 0,
+			audio: null
 		}
+	},
+	methods: {
+		toggleTrack() {
+			if(this.playing) {
+				this.pauseTrack()
+			} else {
+				this.playTrack()
+			}
+		},
+		playTrack() {
+			this.$store.dispatch('playTrack', this.player.playing)
+		},
+		pauseTrack() {
+			this.$store.dispatch('pauseTrack', this.player.playing)
+		},
+		stopTrack() {
+			this.pauseTrack()
+			this.audio.currentTime()
+		},
+		formatTime(seconds) {
+			return this.$moment.utc(seconds * 1000).format('m:ss')
+		},
 	},
 	components: {
 	}

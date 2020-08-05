@@ -20,7 +20,7 @@ export default {
 		'tracks'
 	]),
 	async mounted() {
-		this.$store.dispatch('updateTracks', await get('/tracks'))
+		this.$store.dispatch('addTracks', await get('/tracks'))
 	},
 	components: {
         Layout,

@@ -5,8 +5,6 @@
                 v-for="track in tracks"
                 :key="track.id"
                 :track="track"
-                :currentTrack="playing"
-                @update-track="updatePlaying"
             />
         </div>
         <div v-else class="has-text-centered">
@@ -16,23 +14,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import Track from './Track.vue'
 
 export default {
 	name: 'Navbar',
 	props: [
 		'tracks'
-	],
-	data() {
-		return {
-			playing: null
-		}
-	},
-	methods: {
-		updatePlaying(id) {
-			this.playing = id
-		}
-	},
+    ],
+    computed: mapState([
+        'player'
+    ]),
 	components: {
 		Track
 	}

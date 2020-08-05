@@ -32,6 +32,7 @@ class Track extends Model {
             description: this.description,
             trackUrl: this.getTrackUrl(),
             waveform: this.waveform,
+            duration: this.duration,
             status: this.status,
             createdAt: this.created_at,
             username: this.user.username,

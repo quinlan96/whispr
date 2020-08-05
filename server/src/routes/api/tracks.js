@@ -1,6 +1,7 @@
 import express from 'express'
 import createError from 'http-errors'
 import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
 
 import authenticate from '../../middleware/auth'
 import { generateWaveform } from '../../services/waveform'
@@ -134,16 +135,27 @@ router.post('/tracks/:id/upload-track', async (req, res, next) => {
     const filename = 'track.' + file.name.split('.').pop()
 
     try {
-        file.mv(`${STORAGE_DIR}/${track.id}/${filename}`)
+        await file.mv(`${STORAGE_DIR}/${track.id}/${filename}`)
     } catch(e) {
         console.log(e.message)
     }
 
-    track = await track.$query().patchAndFetch({
-        file: filename,
-		original_file: file.name,
-		status: "ENABLED"
-    })
+    ffmpeg(`${STORAGE_DIR}/${track.id}/${filename}`)
+        .ffprobe(async (err, data) => {
+            if(err) {
+                console.log(err)
+            }
+
+            const duration = data.format.duration
+
+            await track.$query().patchAndFetch({
+                file: filename,
+                original_file: file.name,
+                duration: duration,
+                status: "ENABLED"
+            })
+        })
+
 
     res.json({})
 })

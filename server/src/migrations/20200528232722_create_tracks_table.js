@@ -9,6 +9,7 @@ export const up = (knex) => {
 			table.string('status').nullable()
             table.string('file').nullable()
             table.string('original_file').nullable()
+            table.float('duration').nullable()
 			table.json('waveform').nullable()
             table.timestamps()
         })

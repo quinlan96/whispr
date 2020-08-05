@@ -1,4 +1,8 @@
-import Vue from 'vue'
+const defaultTrack = {
+	playing: false,
+	current: 0,
+	data: null
+}
 
 const state = {
     tracks: []
@@ -10,19 +14,25 @@ const mutations = {
     TRACKS_SET(state, tracks) {
         state.tracks = tracks
 	},
-	TRACK_SET(state, track) {
-		const index = state.tracks.findIndex(track => track.id == track.id)
-
-		Vue.set(state.tracks, index, track)
+	TRACK_ADD(state, track) {
+		state.tracks.push(track)
 	}
 }
 
 const actions = {
-	updateTracks({ commit }, tracks) {
-		commit('TRACKS_SET', tracks)
+	addTracks({ dispatch, commit }, tracks) {
+		commit('TRACKS_SET', [])
+
+		tracks.map((track) => {
+			dispatch('addTrack', track)
+		})
 	},
-	updateTrack({ commit }, track) {
-		commit('TRACK_SET', track)
+	addTrack({ commit }, data) {
+		const track = defaultTrack
+
+		track.data = data
+
+		commit('TRACK_ADD', track)
 	}
 }
 
