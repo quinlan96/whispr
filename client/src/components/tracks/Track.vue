@@ -65,7 +65,7 @@ export default {
 	methods: {
 		toggleTrack() {
 			if(this.player.playing !== this.track.data.id) {
-				this.loadTrack()
+				this.loadPlayer()
 			}
 
 			if(this.track.playing) {
@@ -74,17 +74,17 @@ export default {
                 this.playTrack()
 			}
 		},
-		loadTrack() {
-			this.$store.dispatch('loadTrack', this.track)
+		loadPlayer() {
+			this.$store.dispatch('loadPlayer', this.track)
 		},
         playTrack() {
-			this.$store.dispatch('playTrack', this.track.data.id)
+			this.$store.dispatch('playPlayer', this.track.data.id)
         },
         pauseTrack() {
 			this.$store.dispatch('pauseTrack', this.track.data.id)
         },
 		stopTrack() {
-			this.$store.dispatch('stopTrack', 0)
+			this.$store.dispatch('stopTrack', this.track.data.id)
 		},
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')

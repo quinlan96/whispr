@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 import Track from './Track.vue'
 
 export default {
@@ -23,9 +21,6 @@ export default {
 	props: [
 		'tracks'
     ],
-    computed: mapState([
-        'player'
-    ]),
 	components: {
 		Track
 	}
