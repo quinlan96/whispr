@@ -66,8 +66,11 @@ const actions = {
 	pauseTrack({ commit }, id) {
 		commit('TRACK_PLAYING_SET', { id: id, playing: false })
 	},
-	updateTrackCurrent({ commit, rootGetters }, { id, current }) {
-		commit('TRACK_CURRENT_SET', { id, current })
+	updateTrackCurrent({ commit, rootGetters }, id) {
+		commit('TRACK_CURRENT_SET', {
+			id: id,
+			current: rootGetters.audioCurrent
+		})
 	}
 }
 

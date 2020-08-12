@@ -41,12 +41,13 @@ const actions = {
 
 		audio.ontimeupdate = () => {
 			dispatch('updateCurrent', track.data.id)
+			dispatch('updateTrackCurrent', track.data.id)
 		}
 
 		commit('PLAYER_AUDIO_SET', audio)
 	},
-	updateCurrent({ dispatch }, id) {
-		dispatch('updateTrackCurrent', id)
+	updateCurrent({ commit, rootGetters }) {
+		commit('PLAYER_TRACK_CURRENT_SET', rootGetters.audioCurrent)
 	},
 	updatePlayer({ commit }, track) {
 		commit('PLAYER_TRACK_SET', track)
