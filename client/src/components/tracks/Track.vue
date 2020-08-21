@@ -81,7 +81,7 @@ export default {
 			this.$store.dispatch('playPlayer', this.track.data.id)
         },
         pauseTrack() {
-			this.$store.dispatch('pauseTrack', this.track.data.id)
+			this.$store.dispatch('pausePlayer', this.track.data.id)
         },
 		stopTrack() {
 			this.$store.dispatch('stopTrack', this.track.data.id)

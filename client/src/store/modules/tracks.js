@@ -1,10 +1,5 @@
 import Vue from 'vue'
-
-const defaultTrack = {
-	playing: false,
-	current: 0,
-	data: null
-}
+import { DEFAULT_TRACK } from '@/constants'
 
 const getTrack = (tracks, id) => {
 	return tracks.findIndex(track => track.data.id == id)
@@ -33,15 +28,15 @@ const mutations = {
 		Vue.set(state.tracks, index, track)
 	},
 	TRACK_CURRENT_SET(state, { id, current }) {
-		console.log(current)
-
 		const index = getTrack(state.tracks, id)	
 
-		const track = state.tracks[index] 
+		if(index > 0) {
+			const track = state.tracks[index] 
 
-		track.current = current
+			track.current = current
 
-		Vue.set(state.tracks, index, track)
+			Vue.set(state.tracks, index, track)
+		}
 	}
 }
 
@@ -54,7 +49,7 @@ const actions = {
 		})
 	},
 	addTrack({ commit }, data) {
-		const track = defaultTrack
+		const track = DEFAULT_TRACK
 
 		track.data = data
 
@@ -66,10 +61,10 @@ const actions = {
 	pauseTrack({ commit }, id) {
 		commit('TRACK_PLAYING_SET', { id: id, playing: false })
 	},
-	updateTrackCurrent({ commit, rootGetters }, id) {
+	updateTrackCurrent({ commit }, { id, current }) {
 		commit('TRACK_CURRENT_SET', {
 			id: id,
-			current: rootGetters.audioCurrent
+			current: current
 		})
 	}
 }

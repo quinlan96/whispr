@@ -1,20 +1,14 @@
+import { DEFAULT_TRACK } from '@/constants'
+
 const state = {
-	audio: null,
 	volume: 100,
 	playing: null,
-	track: {}
+	track: DEFAULT_TRACK
 }
 
-const getters = {
-	audioCurrent(state) {
-		return state.audio.currentTime
-	}
-}
+const getters = {}
 
 const mutations = {
-	PLAYER_AUDIO_SET(state, audio) {
-		state.audio = audio
-	},
 	PLAYER_PLAYING_SET(state, id) {
 		state.playing = id
 	},
@@ -27,34 +21,27 @@ const mutations = {
 	PLAYER_CURRENT_SET(state) {
 		state.track.current = state.audio.currentTime
 	},
-	PLAYER_AUDIO_PLAY(state) {
-		state.audio.play()
+	PLAYER_TRACK_PLAYING_SET(state, playing) {
+		state.track.playing = playing
 	}
 }
 
 const actions = {
-	loadPlayer({ commit, dispatch }, track) {
-		commit('PLAYER_PLAYING_SET', track.data.id)
+	loadPlayer({ commit }, track) {
 		commit('PLAYER_TRACK_SET', track)
-
-		const audio = new Audio(track.data.trackUrl)
-
-		audio.ontimeupdate = () => {
-			dispatch('updateCurrent', track.data.id)
-			dispatch('updateTrackCurrent', track.data.id)
-		}
-
-		commit('PLAYER_AUDIO_SET', audio)
+		commit('PLAYER_PLAYING_SET', track.data.id)
 	},
-	updateCurrent({ commit, rootGetters }) {
-		commit('PLAYER_TRACK_CURRENT_SET', rootGetters.audioCurrent)
+	updateCurrent({ commit }, current) {
+		commit('PLAYER_TRACK_CURRENT_SET', current)
 	},
 	updatePlayer({ commit }, track) {
 		commit('PLAYER_TRACK_SET', track)
 	},
-	playPlayer({ commit }, id) {
-		commit('PLAYER_PLAYING_SET', id)
-		commit('PLAYER_AUDIO_PLAY')
+	playPlayer({ commit }) {
+		commit('PLAYER_TRACK_PLAYING_SET')
+	},
+	pausePlayer({ commit }) {
+		commit('PLAYER_TRAC')
 	}
 }
 

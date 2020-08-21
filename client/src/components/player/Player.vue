@@ -8,7 +8,7 @@
 			</div>
 			<div class="player-seek">
 				<span>{{ formatTime(player.track.current) }}</span>
-				<b-slider class="seek-bar" type="is-primary is-small" v-model="seek" :max="1000" :tooltip="false" rounded></b-slider>
+				<b-slider class="seek-bar" type="is-primary is-small" v-model="player.track.current" :max="1000" :tooltip="false" rounded></b-slider>
 				<span>{{ formatTime(player.track.data ? player.track.data.duration : '') }}</span>
 			</div>
 			<div class="volume-controls">
@@ -34,6 +34,24 @@ export default {
 			audio: null
 		}
 	},
+	watch: {
+		'player.playing': function() {
+			this.audio = new Audio(this.player.track.data.trackUrl)
+
+			this.audio.ontimeupdate = () => {
+				this.$store.dispatch('updateCurrent', this.audio.currentTime)
+				this.$store.dispatch('updateTrackCurrent', {
+					id: this.player.track.data.id,
+					current: this.audio.currentTime
+				})
+			}
+		},
+		'player.track.playing': function(playing) {
+			if(playing && this.audio) {
+				this.audio.play()
+			}
+		}
+	},
 	methods: {
 		toggleTrack() {
 			if(this.playing) {
@@ -54,7 +72,7 @@ export default {
 		},
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
-		},
+		}
 	},
 	components: {
 	}
