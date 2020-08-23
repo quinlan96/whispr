@@ -7,5 +7,6 @@ export const BAR_GAP = 1
 export const DEFAULT_TRACK = {
 	playing: false,
 	current: 0,
+	setCurrent: null,
 	data: null
 }

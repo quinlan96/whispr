@@ -2,18 +2,37 @@
 	<div class="player">
 		<div class="container">
 			<div class="player-controls">
-				<b-icon icon="undo"></b-icon>
-				<b-icon icon="play"></b-icon>
-				<b-icon icon="redo"></b-icon>
+				<b-icon class="player-backwards" icon="undo"></b-icon>
+				<b-icon class="player-play" :icon="player.track.playing ? 'pause' : 'play'"></b-icon>
+				<b-icon class="player-forwards" icon="redo"></b-icon>
 			</div>
 			<div class="player-seek">
-				<span>{{ formatTime(player.track.current) }}</span>
-				<b-slider class="seek-bar" type="is-primary is-small" v-model="player.track.current" :max="1000" :tooltip="false" rounded></b-slider>
-				<span>{{ formatTime(player.track.data ? player.track.data.duration : '') }}</span>
+				<span class="player-current">{{ formatTime(player.track.current) }}</span>
+				<b-slider
+					class="seek-bar"
+					type="is-primary is-small"
+					v-model="player.seek"
+					@change="handleSeek"
+					@dragstart="handleDragStart"
+					@dragend="handleDragEnd"
+					:max="1000"
+					:tooltip="false"
+					rounded
+				>
+				</b-slider>
+				<span class="player-duration">{{ formatTime(player.track.data ? player.track.data.duration : '') }}</span>
 			</div>
 			<div class="volume-controls">
 				<b-icon class="volume-icon" icon="volume-down"></b-icon>
-				<b-slider class="volume-bar" type="is-primary is-small" v-model="volume" :tooltip="false" rounded></b-slider>
+				<b-slider
+					class="volume-bar"
+					type="is-primary is-small"
+					v-model="player.volume"
+					@input="handleVolume"
+					:tooltip="false"
+					rounded
+				>
+				</b-slider>
 			</div>
 		</div>
 	</div>
@@ -29,8 +48,6 @@ export default {
 	]),
 	data() {
 		return {
-			seek: 0,
-			volume: 0,
 			audio: null
 		}
 	},
@@ -47,8 +64,12 @@ export default {
 			}
 		},
 		'player.track.playing': function(playing) {
-			if(playing && this.audio) {
-				this.audio.play()
+			if(this.audio) {
+				if(playing) {
+					this.audio.play()
+				} else {
+					this.audio.pause()
+				}
 			}
 		}
 	},
@@ -72,6 +93,23 @@ export default {
 		},
 		formatTime(seconds) {
 			return this.$moment.utc(seconds * 1000).format('m:ss')
+		},
+		handleSeek(value) {
+			const current = (value / 1000) * this.player.track.data.duration
+
+
+			this.$store.dispatch('updateCurrent', current)
+		},
+		handleDragStart() {
+			this.$store.dispatch('updateSeekDragging', true)
+		},
+		handleDragEnd() {
+			this.$store.dispatch('updateSeekDragging', false)
+		},
+		handleVolume(value) {
+			if(this.audio) {
+				this.audio.volume = value
+			}
 		}
 	},
 	components: {
@@ -96,6 +134,15 @@ export default {
 
 		.player-controls {
 			display: flex;
+
+			.player-backwards, .player-forwards {
+				font-size: .8rem;
+			}
+
+			.player-play {
+				font-size: 1.2rem;
+				margin: 0 .3rem;
+			}
 		}
 
 		.player-seek {
@@ -103,6 +150,11 @@ export default {
 			margin: 0 1rem;
 			display: flex;
 			align-items: center;
+
+			.player-current, .player-duration {
+				width: 4rem;
+				text-align: center;
+			}
 
 			.seek-bar {
 				margin: 0 1rem;

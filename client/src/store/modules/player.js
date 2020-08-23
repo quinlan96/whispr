@@ -1,6 +1,8 @@
 import { DEFAULT_TRACK } from '@/constants'
 
 const state = {
+	seek: 0,
+	seekDragging: false,
 	volume: 100,
 	playing: null,
 	track: DEFAULT_TRACK
@@ -17,12 +19,16 @@ const mutations = {
 	},
 	PLAYER_TRACK_CURRENT_SET(state, current) {
 		state.track.current = current
-	},
-	PLAYER_CURRENT_SET(state) {
-		state.track.current = state.audio.currentTime
+
+		if(!state.seekDragging) {
+			state.seek =  (current / state.track.data.duration) * 1000
+		}
 	},
 	PLAYER_TRACK_PLAYING_SET(state, playing) {
 		state.track.playing = playing
+	},
+	PLAYER_SEEK_DRAGGING_SET(state, dragging) {
+		state.seekDragging = dragging
 	}
 }
 
@@ -38,10 +44,13 @@ const actions = {
 		commit('PLAYER_TRACK_SET', track)
 	},
 	playPlayer({ commit }) {
-		commit('PLAYER_TRACK_PLAYING_SET')
+		commit('PLAYER_TRACK_PLAYING_SET', true)
 	},
 	pausePlayer({ commit }) {
-		commit('PLAYER_TRAC')
+		commit('PLAYER_TRACK_PLAYING_SET', false)
+	},
+	updateSeekDragging({ commit }, dragging) {
+		commit('PLAYER_SEEK_DRAGGING_SET', dragging)
 	}
 }
 
