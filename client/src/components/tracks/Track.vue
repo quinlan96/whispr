@@ -19,7 +19,7 @@
 							<span class="track-title"><strong>{{ track.data.title }}</strong></span>
 							<span class="track-user">{{ track.data.username }}</span>
 						</div>
-						<div class="track-created">{{ track.createdAt | moment('from', 'now') }}</div>
+						<div class="track-created">{{ getCreatedAt() }}</div>
 					</div>
 					<audio ref="audio" :src="track.trackUrl" />
 					<Waveform
@@ -84,13 +84,18 @@ export default {
 			this.$store.dispatch('pausePlayer', this.track.data.id)
         },
 		stopTrack() {
-			this.$store.dispatch('stopTrack', this.track.data.id)
+			this.$store.dispatch('stopPlayer', this.track.data.id)
 		},
 		formatTime(seconds) {
-			return this.$moment.utc(seconds * 1000).format('m:ss')
+			if(seconds >= 0) {
+				return this.$moment.utc(seconds * 1000).format('m:ss')
+			}
 		},
 		setProgress(progress) {
-			this.$store.dispatch('setProgress', progress)
+			this.$store.dispatch('setTrackProgress', progress)
+		},
+		getCreatedAt() {
+			return this.$moment(this.track.data.createdAt).fromNow()
 		}
 	},
 	components: {

@@ -1,8 +1,21 @@
 <template>
 	<div id="app">
-		<router-view/>
+		<Layout>
+			<router-view/>
+		</Layout>
 	</div>
 </template>
+
+<script>
+import Layout from '@/components/layout/Layout.vue'
+
+export default {
+	name: 'App',
+	components: {
+		Layout
+	}
+}
+</script>
 
 <style lang="scss">
 @import "assets/scss";

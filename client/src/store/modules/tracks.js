@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import { DEFAULT_TRACK } from '@/constants'
 
+function getDefaultTrack() {
+	return { ...DEFAULT_TRACK }
+}
+
 const getTrack = (tracks, id) => {
 	return tracks.findIndex(track => track.data.id == id)
 }
@@ -18,6 +22,15 @@ const mutations = {
 	TRACK_ADD(state, track) {
 		state.tracks.push(track)
 	},
+	TRACK_RESET(state, id) {
+		const track = getDefaultTrack()	
+		
+		const index = getTrack(state.tracks, id)
+
+		track.data = state.tracks[index].data
+
+		Vue.set(state.tracks, index, track)
+	},
 	TRACK_PLAYING_SET(state, { id, playing }) {
 		const index = getTrack(state.tracks, id)
 
@@ -32,6 +45,8 @@ const mutations = {
 
 		if(index > 0) {
 			const track = state.tracks[index] 
+
+			console.log(track)
 
 			track.current = current
 
@@ -48,18 +63,25 @@ const actions = {
 			dispatch('addTrack', track)
 		})
 	},
-	addTrack({ commit }, data) {
-		const track = DEFAULT_TRACK
+	addTrack({ commit, rootGetters }, data) {
+		if(data.id == rootGetters.getPlaying) {
+			commit('TRACK_ADD', rootGetters.getCurrentTrack)
+		} else {
+			const track = getDefaultTrack()
 
-		track.data = data
+			track.data = data
 
-		commit('TRACK_ADD', track)
+			commit('TRACK_ADD', track)
+		}
 	}, 
 	playTrack({ commit }, id) {
 		commit('TRACK_PLAYING_SET', { id: id, playing: true })
 	},
 	pauseTrack({ commit }, id) {
 		commit('TRACK_PLAYING_SET', { id: id, playing: false })
+	},
+	stopTrack({ commit }, id) {
+		commit('TRACK_RESET', id)
 	},
 	updateTrackCurrent({ commit }, { id, current }) {
 		commit('TRACK_CURRENT_SET', {

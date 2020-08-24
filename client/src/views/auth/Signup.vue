@@ -1,24 +1,20 @@
 <template>
-	<Layout>
-        <div class="container">
-            <div class="card signup-form">
-                <div class="card-content">
-                    <h2 class="title has-text-centered">Signup</h2>
-                    <SignupForm />
-                </div>
+    <div class="container">
+        <div class="card signup-form">
+            <div class="card-content">
+                <h2 class="title has-text-centered">Signup</h2>
+                <SignupForm />
             </div>
         </div>
-    </Layout>
+    </div>
 </template>
 
 <script>
-import Layout from '@/components/layout/Layout.vue'
 import SignupForm from '@/components/auth/SignupForm.vue'
 
 export default {
 	name: 'Signup',
 	components: {
-        Layout,
         SignupForm
 	}
 }

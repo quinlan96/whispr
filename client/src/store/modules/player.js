@@ -1,16 +1,32 @@
+import Vue from 'vue'
+
 import { DEFAULT_TRACK } from '@/constants'
 
-const state = {
-	seek: 0,
-	seekDragging: false,
-	volume: 100,
-	playing: null,
-	track: DEFAULT_TRACK
+function getDefaultPlayer() {
+	return {
+		seek: 0,
+		seekDragging: false,
+		volume: 100,
+		playing: null,
+		track: { ...DEFAULT_TRACK }
+	}
 }
 
-const getters = {}
+const state = getDefaultPlayer()
+
+const getters = {
+	getCurrentTrack: state => state.track,
+	getPlaying: state => state.playing
+}
 
 const mutations = {
+	PLAYER_RESET(state) {
+		const player = getDefaultPlayer()
+
+		Object.keys(state).forEach(key => {
+			Vue.set(state, key, player[key])
+		})
+	},
 	PLAYER_PLAYING_SET(state, id) {
 		state.playing = id
 	},
@@ -23,6 +39,11 @@ const mutations = {
 		if(!state.seekDragging) {
 			state.seek =  (current / state.track.data.duration) * 1000
 		}
+	},
+	PLAYER_TRACK_PROGRESS_SET(state, progress) {
+		const current = (progress * state.track.data.duration)
+
+		state.track.setCurrent = current
 	},
 	PLAYER_TRACK_PLAYING_SET(state, playing) {
 		state.track.playing = playing
@@ -49,8 +70,15 @@ const actions = {
 	pausePlayer({ commit }) {
 		commit('PLAYER_TRACK_PLAYING_SET', false)
 	},
+	stopPlayer({ commit, dispatch, rootGetters }) {
+		dispatch('stopTrack', rootGetters.getPlaying)
+		commit('PLAYER_RESET')
+	},
 	updateSeekDragging({ commit }, dragging) {
 		commit('PLAYER_SEEK_DRAGGING_SET', dragging)
+	},
+	setTrackProgress({ commit }, progress) {
+		commit('PLAYER_TRACK_PROGRESS_SET', progress)
 	}
 }
 
