@@ -1,12 +1,13 @@
 <template>
     <b-button
-        :type="track.liked ? 'is-primary' : 'is-light'"
+        class="like-btn"
+        :type="track.data.liked ? 'is-primary' : 'is-light'"
         icon-left="heart"
         size="is-small"
         outlined
         @click="handleLike"
     >
-        {{ track.likes ? track.likes : 'Like' }}
+        {{ track.data.likes ? track.data.likes : 'Like' }}
     </b-button>
 </template>
 
@@ -19,15 +20,15 @@ export default {
         'track'
     ],
 	methods: {
-        async handleLike() {
+        async handleLike(e) {
+            e.target.closest('button').blur()
+
             try {
-				const url = `/tracks/${this.track.id}/` + (this.track.liked ? 'unlike' : 'like')
+				const url = `/tracks/${this.track.data.id}/` + (this.track.data.liked ? 'unlike' : 'like')
 
                 const track = await post(url)
 
-				console.log(track)
-
-				this.$store.dispatch('updateTrack', track)
+				this.$store.dispatch('updateTrackData', track)
             } catch (e) {
                 console.log(e.message)
             }
@@ -41,7 +42,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../../assets/scss/_variables.scss";
 
-.liked {
+.like-btn {
 	border-color: $primary;
 }
 </style>

@@ -22,6 +22,15 @@ const mutations = {
 	TRACK_ADD(state, track) {
 		state.tracks.push(track)
 	},
+	TRACK_DATA_SET(state, data) {
+		const index = getTrack(state.tracks, data.id)
+
+		const track = state.tracks[index]
+		
+		track.data = data
+
+		Vue.set(state.tracks, index, track)
+	},
 	TRACK_RESET(state, id) {
 		const track = getDefaultTrack()	
 		
@@ -73,7 +82,10 @@ const actions = {
 
 			commit('TRACK_ADD', track)
 		}
-	}, 
+	},
+	updateTrackData({ commit }, track) {
+		commit('TRACK_DATA_SET', track)
+	},
 	playTrack({ commit }, id) {
 		commit('TRACK_PLAYING_SET', { id: id, playing: true })
 	},
