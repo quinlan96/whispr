@@ -3,7 +3,7 @@
 		<template slot="brand">
 			<b-navbar-item tag="router-link" :to="{ name: 'Home' }">
                 <img class="navbar-logo" src="../../assets/images/logo.svg" />
-                <span class="navbar-title has-text-white">ThisWeeksSponsor</span>
+                <span class="navbar-title has-text-white">Whispr</span>
 			</b-navbar-item>
 		</template>
         <template slot="start">
