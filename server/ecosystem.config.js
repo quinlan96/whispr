@@ -3,6 +3,7 @@ module.exports = {
 		{
 			name: "whispr",
 			script: "./dist/bin/www.js",
+			node_args: "-r dotenv/config",
 			env: {
 				"NODE_ENV": "development",
 			},
