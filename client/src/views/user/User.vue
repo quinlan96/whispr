@@ -1,19 +1,15 @@
 <template>
-	<Layout>
-		<div class="container">
-			<UserProfile />
-		</div>
-	</Layout>
+	<div class="container">
+		<UserProfile />
+	</div>
 </template>
 
 <script>
-import Layout from '@/components/layout/Layout.vue'
 import UserProfile from '@/components/user/UserProfile.vue'
 
 export default {
 	name: 'User',
     components: {
-        Layout,
 		UserProfile
     }
 }

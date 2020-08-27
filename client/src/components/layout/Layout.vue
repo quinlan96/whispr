@@ -1,10 +1,10 @@
 <template>
 	<div class="layout">
 		<Navbar />
-        <div v-if="alerts.length" class="container">
-            <Alerts :alerts="alerts" />
-        </div>
-        <slot></slot>
+		<div v-if="alerts.length" class="container">
+			<Alerts :alerts="alerts" />
+		</div>
+		<slot></slot>
 		<Footer />
 		<Player />
 	</div>

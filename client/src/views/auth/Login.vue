@@ -1,18 +1,15 @@
 <template>
-	<Layout>
-        <div class="container">
-            <div class="card login-form">
-                <div class="card-content">
-                    <h2 class="title has-text-centered">Login</h2>
-                    <LoginForm :redirectTo="this.$route.query.redirectTo"/>
-                </div>
+    <div class="container">
+        <div class="card login-form">
+            <div class="card-content">
+                <h2 class="title has-text-centered">Login</h2>
+                <LoginForm :redirectTo="this.$route.query.redirectTo"/>
             </div>
         </div>
-	</Layout>
+    </div>
 </template>
 
 <script>
-import Layout from '@/components/layout/Layout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 
 export default {
@@ -23,7 +20,6 @@ export default {
         }
     },
 	components: {
-		Layout,
         LoginForm
 	}
 }
