@@ -60,6 +60,7 @@ export default {
         return {
             dropzoneOptions: {
                 url: this.url,
+				timeout: 600000,
                 maxFiles: 1,
                 maxFilesize: 1024,
                 uploadMultiple: false,
