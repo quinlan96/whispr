@@ -7,7 +7,7 @@
 			</b-navbar-item>
 		</template>
         <template slot="start">
-            <b-navbar-item v-if="loggedIn" tag="router-link" :to="{ name: 'Upload' }">
+            <b-navbar-item v-if="loggedIn" tag="router-link" :to="{ name: 'Upload' }" :active="$router.currentRoute.name === 'Upload'">
                 Upload
             </b-navbar-item>
         </template>

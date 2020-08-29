@@ -9,8 +9,11 @@
 <script>
 import Layout from '@/components/layout/Layout.vue'
 
+import { PROJECT_NAME } from '@/constants'
+
 export default {
 	name: 'App',
+	title: PROJECT_NAME,
 	components: {
 		Layout
 	}

@@ -16,7 +16,9 @@ export default {
     props: ['alert', 'index'],
     methods: {
         handleClose() {
-            this.$store.dispatch('removeAlert', this.index)
+            setTimeout(() => {
+                this.$store.dispatch('removeAlert', this.index)
+            }, 500)
         }
     }
 }

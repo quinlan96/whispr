@@ -2,11 +2,15 @@
 	<div :class="{ 'hide': !(player.playing > 0), 'player': true }">
 		<div class="container">
 			<div class="player-controls">
-				<b-icon class="player-backwards" icon="undo"></b-icon>
+				<span @click="stepBackwards">
+					<b-icon class="player-backwards" icon="undo"></b-icon>
+				</span>
 				<span @click="toggleTrack">
 					<b-icon class="player-play" :icon="player.track.playing ? 'pause' : 'play'"></b-icon>
 				</span>
-				<b-icon class="player-forwards" icon="redo"></b-icon>
+				<span @click="stepForwards">
+					<b-icon class="player-forwards" icon="redo"></b-icon>
+				</span>
 			</div>
 			<div class="player-seek">
 				<span class="player-current">{{ formatTime(player.track.current) }}</span>
@@ -103,6 +107,12 @@ export default {
 		},
 		pauseTrack() {
 			this.$store.dispatch('pausePlayer', this.player.playing)
+		},
+		stepForwards() {
+
+		},
+		stepBackwards() {
+
 		},
 		stopTrack() {
 			this.pauseTrack()
