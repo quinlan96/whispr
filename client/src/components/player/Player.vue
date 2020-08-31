@@ -2,14 +2,14 @@
 	<div :class="{ 'hide': !(player.playing > 0), 'player': true }">
 		<div class="container">
 			<div class="player-controls">
-				<span @click="stepBackwards">
-					<b-icon class="player-backwards" icon="undo"></b-icon>
+				<span @click="stepBackwards" class="player-backwards">
+					<b-icon class="player-backwards-icon" icon="undo"></b-icon>
 				</span>
-				<span @click="toggleTrack">
-					<b-icon class="player-play" :icon="player.track.playing ? 'pause' : 'play'"></b-icon>
+				<span @click="toggleTrack" class="player-play">
+					<b-icon class="player-play-icon" :icon="player.track.playing ? 'pause' : 'play'"></b-icon>
 				</span>
-				<span @click="stepForwards">
-					<b-icon class="player-forwards" icon="redo"></b-icon>
+				<span @click="stepForwards" class="player-forwards">
+					<b-icon class="player-forwards-icon" icon="redo"></b-icon>
 				</span>
 			</div>
 			<div class="player-seek">
@@ -18,9 +18,9 @@
 					class="seek-bar"
 					type="is-primary is-small"
 					v-model="player.seek"
-					@change="handleSeek"
-					@dragstart="handleDragStart"
-					@dragend="handleDragEnd"
+					@change="changeSeek"
+					@dragstart="seekDragStart"
+					@dragend="seekDragEnd"
 					:max="1000"
 					:tooltip="false"
 					rounded
@@ -29,12 +29,17 @@
 				<span class="player-duration">{{ formatTime(player.track.data ? player.track.data.duration : '') }}</span>
 			</div>
 			<div class="volume-controls">
-				<b-icon class="volume-icon" icon="volume-down"></b-icon>
+				<span @click="toggleMute" class="volume-icon-container">
+					<b-icon :icon="getVolumeIcon()"></b-icon>
+				</span>
 				<b-slider
 					class="volume-bar"
 					type="is-primary is-small"
 					v-model="player.volume"
-					@input="handleVolume"
+					@input="inputVolume"
+					@change="changeVolume"
+					@dragstart="volumeDragStart"
+					@dragend="volumeDragEnd"
 					:tooltip="false"
 					rounded
 				>
@@ -48,6 +53,8 @@
 import Vue from 'vue'
 import { mapState } from 'vuex'
 
+import { KEY_SPACEBAR, KEY_LEFT, KEY_RIGHT } from '@/constants'
+
 export default {
 	name: 'Player',
 	computed: mapState([
@@ -59,17 +66,21 @@ export default {
 		}
 	},
 	watch: {
-		'player.playing': function(playing) {
-			if(playing > 0) {
-				this.audio = new Audio(this.player.track.data.trackUrl)
-				
-				this.audio.addEventListener('timeupdate', this.trackUpdateListener)
-			} else {
+		'player.playing': function(newPlaying, oldPlaying) {
+			if(newPlaying !== oldPlaying && this.audio) {
 				this.audio.pause()
 
 				this.audio.removeEventListener('timeupdate', this.trackUpdateListener)
 
 				Vue.set(this.audio, null)
+			}
+
+			if(newPlaying > 0) {
+				this.audio = new Audio(this.player.track.data.trackUrl)
+				
+				this.audio.addEventListener('timeupdate', this.trackUpdateListener)
+
+				this.audio.play()
 			}
 		},
 		'player.track.playing': function(playing) {
@@ -85,6 +96,11 @@ export default {
 			if(this.audio) {
 				this.audio.currentTime = current
 			}
+		},
+		'player.setVolume': function(volume) {
+			if(this.audio) {
+				this.audio.volume = volume
+			}
 		}
 	},
 	methods: {
@@ -99,6 +115,16 @@ export default {
 				this.playTrack()
 			}
 		},
+		toggleMute() {
+			if(this.player.volume > 0) {
+				this.$store.dispatch('updateVolumePrevious', this.player.volume)
+				this.audio.volume = 0
+				this.$store.dispatch('updateVolume', 0)
+			} else {
+				this.audio.volume = (this.player.volumePrevious / 100)
+				this.$store.dispatch('updateVolume', this.player.volumePrevious)
+			}
+		},
 		loadPlayer() {
 			this.$store.dispatch('loadPlayer', this.player.track)
 		},
@@ -108,37 +134,50 @@ export default {
 		pauseTrack() {
 			this.$store.dispatch('pausePlayer', this.player.playing)
 		},
-		stepForwards() {
-
-		},
 		stepBackwards() {
+			const current = this.player.track.current - 15
 
+			this.$store.dispatch('setTrackCurrent', current)
+		},
+		stepForwards() {
+			const current = this.player.track.current + 15
+
+			this.$store.dispatch('setTrackCurrent', current)
 		},
 		stopTrack() {
 			this.pauseTrack()
 			this.audio.currentTime()
 		},
-		formatTime(seconds) {
-			if(seconds >= 0) {
-				return this.$moment.utc(seconds * 1000).format('m:ss')
-			}
-		},
-		handleSeek(value) {
+		changeSeek(value) {
 			const current = (value / 1000) * this.player.track.data.duration
-
 
 			this.$store.dispatch('updateCurrent', current)
 			this.$store.dispatch('setTrackProgress', value / 1000)
 		},
-		handleDragStart() {
+		seekDragStart() {
 			this.$store.dispatch('updateSeekDragging', true)
 		},
-		handleDragEnd() {
+		seekDragEnd() {
 			this.$store.dispatch('updateSeekDragging', false)
 		},
-		handleVolume(value) {
+		changeVolume(value) {
+			if(value > 0) {
+				this.$store.dispatch('updateVolumePrevious', value)
+			}
+		},
+		inputVolume(value) {
 			if(this.audio) {
 				this.audio.volume = (value / 100)
+			}
+		},
+		volumeDragStart() {
+			if(this.player.volume > 0) {
+				this.$store.dispatch('updateVolumePrevious', this.player.volume)
+			}
+		},
+		volumeDragEnd() {
+			if(this.player.volume > 0) {
+				this.$store.dispatch('updateVolumePrevious', this.player.volume)
 			}
 		},
 		trackUpdateListener() {
@@ -147,9 +186,36 @@ export default {
 				id: this.player.track.data.id,
 				current: this.audio.currentTime
 			})
+		},
+		getVolumeIcon() {
+			if(this.player.volume === 0) {
+				return 'volume-mute'
+			} else if(this.player.volume < 33.33) {
+				return 'volume-off'
+			} else if(this.player.volume < 66.66) {
+				return 'volume-down'
+			} else {
+				return 'volume-up'
+			}
+		},
+		formatTime(seconds) {
+			if(seconds >= 0) {
+				return this.$moment.utc(seconds * 1000).format('m:ss')
+			}
 		}
 	},
-	components: {
+	created() {
+		window.addEventListener('keydown', (e) => {
+			if(this.audio) {
+				if(e.keyCode === KEY_SPACEBAR) {
+					this.toggleTrack()
+				} else if(e.keyCode === KEY_LEFT) {
+					this.stepBackwards()		
+				} else if(e.keyCode == KEY_RIGHT) {
+					this.stepForwards()
+				}
+			}
+		})
 	}
 }
 </script>
@@ -177,8 +243,11 @@ $player-height: 3.5rem;
 
 		.player-controls {
 			display: flex;
+			align-items: center;
 
 			.player-play, .player-backwards, .player-forwards {
+				display: flex;
+				align-items: center;
 				cursor: pointer;
 			}
 
@@ -212,8 +281,12 @@ $player-height: 3.5rem;
 			display: flex;
 			align-items: center;
 
-			.volume-icon {
-				margin-right: .5rem;
+			.volume-icon-container {
+				display: flex;
+				align-items: center;
+				margin-right: .75rem;
+
+				cursor: pointer;
 			}
 
 			.volume-bar {

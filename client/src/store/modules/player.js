@@ -7,6 +7,8 @@ function getDefaultPlayer() {
 		seek: 0,
 		seekDragging: false,
 		volume: 100,
+		setVolume: null,
+		volumePrevious: 100,
 		playing: null,
 		track: { ...DEFAULT_TRACK }
 	}
@@ -33,6 +35,12 @@ const mutations = {
 	PLAYER_TRACK_SET(state, track) {
 		state.track = track
 	},
+	PLAYER_VOLUME_SET(state, volume) {
+		state.volume = volume
+	},
+	PLAYER_VOLUMEPREVIOUS_SET(state, volume) {
+		state.volumePrevious = volume
+	},
 	PLAYER_TRACK_CURRENT_SET(state, current) {
 		state.track.current = current
 
@@ -40,8 +48,16 @@ const mutations = {
 			state.seek =  (current / state.track.data.duration) * 1000
 		}
 	},
-	PLAYER_TRACK_PROGRESS_SET(state, progress) {
-		const current = (progress * state.track.data.duration)
+	PLAYER_TRACK_SETCURRENT_SET(state, current) {
+		if(current <=  0) {
+			state.track.setCurrent = 0
+			return
+		}
+
+		if(current > state.track.data.duration) {
+			state.track.setCurrent = state.track.data.duration
+			return
+		}
 
 		state.track.setCurrent = current
 	},
@@ -54,9 +70,17 @@ const mutations = {
 }
 
 const actions = {
-	loadPlayer({ commit }, track) {
+	loadPlayer({ commit, dispatch, rootGetters }, track) {
+		const playing = rootGetters.getPlaying
+
+		if(playing > 0) {
+			dispatch('stopTrack', rootGetters.getPlaying)
+		}
+
+		commit('PLAYER_RESET')
 		commit('PLAYER_TRACK_SET', track)
 		commit('PLAYER_PLAYING_SET', track.data.id)
+		commit('PLAYER_TRACK_PLAYING_SET', true)
 	},
 	updateCurrent({ commit }, current) {
 		commit('PLAYER_TRACK_CURRENT_SET', current)
@@ -74,11 +98,22 @@ const actions = {
 		dispatch('stopTrack', rootGetters.getPlaying)
 		commit('PLAYER_RESET')
 	},
+	updateVolume({ commit }, volume) {
+		commit('PLAYER_VOLUME_SET', volume)
+	},
+	updateVolumePrevious({ commit }, volume) {
+		commit('PLAYER_VOLUMEPREVIOUS_SET', volume)
+	},
 	updateSeekDragging({ commit }, dragging) {
 		commit('PLAYER_SEEK_DRAGGING_SET', dragging)
 	},
 	setTrackProgress({ commit }, progress) {
-		commit('PLAYER_TRACK_PROGRESS_SET', progress)
+		const current = (progress * state.track.data.duration)
+
+		commit('PLAYER_TRACK_SETCURRENT_SET', current)
+	},
+	setTrackCurrent({ commit }, current) {
+		commit('PLAYER_TRACK_SETCURRENT_SET', current)
 	}
 }
 

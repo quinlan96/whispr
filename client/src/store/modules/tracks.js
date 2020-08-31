@@ -55,8 +55,6 @@ const mutations = {
 		if(index > 0) {
 			const track = state.tracks[index] 
 
-			console.log(track)
-
 			track.current = current
 
 			Vue.set(state.tracks, index, track)

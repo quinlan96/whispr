@@ -7,7 +7,7 @@
 			</b-navbar-item>
 		</template>
         <template slot="start">
-            <b-navbar-item v-if="loggedIn" tag="router-link" :to="{ name: 'Upload' }" :active="$router.currentRoute.name === 'Upload'">
+            <b-navbar-item v-if="loggedIn" tag="router-link" :to="{ name: 'Upload' }" :active="(this.$router.currentRoute.name == 'Upload')">
                 Upload
             </b-navbar-item>
         </template>
@@ -43,7 +43,7 @@ export default {
     methods: {
         handleLogout(e) {
             e.preventDefault()
-
+            
             this.$store.dispatch('logout')
         }
     },

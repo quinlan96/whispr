@@ -66,6 +66,7 @@ export default {
 		toggleTrack() {
 			if(this.player.playing !== this.track.data.id) {
 				this.loadPlayer()
+				return
 			}
 
 			if(this.track.playing) {
@@ -84,7 +85,9 @@ export default {
 			this.$store.dispatch('pausePlayer', this.track.data.id)
         },
 		stopTrack() {
-			this.$store.dispatch('stopPlayer', this.track.data.id)
+			if(this.player.playing === this.track.data.id) {
+				this.$store.dispatch('stopPlayer', this.track.data.id)
+			}
 		},
 		formatTime(seconds) {
 			if(seconds >= 0) {
@@ -92,7 +95,9 @@ export default {
 			}
 		},
 		setProgress(progress) {
-			this.$store.dispatch('setTrackProgress', progress)
+			if(this.player.playing === this.track.data.id) {
+				this.$store.dispatch('setTrackProgress', progress)
+			}
 		},
 		getCreatedAt() {
 			return this.$moment(this.track.data.createdAt).fromNow()
