@@ -55,6 +55,7 @@ import { mapState } from 'vuex'
 
 import { KEY_SPACEBAR, KEY_LEFT, KEY_RIGHT } from '@/constants'
 
+
 export default {
 	name: 'Player',
 	computed: mapState([
