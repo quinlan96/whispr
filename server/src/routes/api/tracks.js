@@ -98,9 +98,9 @@ router.post('/tracks/:id/like', authenticate, async (req, res, next) => {
 
 	await track.$relatedQuery('likes').relate(req.token.id)
 
-	const dick = await track.$query().withGraphFetched('user').withGraphFetched('likes')
+	const updated = await track.$query().withGraphFetched('user').withGraphFetched('likes')
 
-    res.json(dick.getPublicJson(req.token.id))
+    res.json(updated.getPublicJson(req.token.id))
 })
 
 router.post('/tracks/:id/unlike', authenticate, async (req, res, next) => {
@@ -108,9 +108,9 @@ router.post('/tracks/:id/unlike', authenticate, async (req, res, next) => {
 
 	await track.$relatedQuery('likes').unrelate().where('id', req.token.id)
 
-	const dick = await track.$query().withGraphFetched('user').withGraphFetched('likes')
+	const updated = await track.$query().withGraphFetched('user').withGraphFetched('likes')
 
-    res.json(dick.getPublicJson(req.token.id))
+    res.json(updated.getPublicJson(req.token.id))
 })
 
 router.post('/tracks/:id/upload-track', async (req, res, next) => {
