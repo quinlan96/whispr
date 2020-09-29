@@ -1,13 +1,14 @@
 <template>
     <div>
-        <div v-if="tracks.length">
+        <div class="track-list">
             <Track
                 v-for="track in tracks"
                 :key="track.id"
                 :track="track"
             />
+            <b-loading :active="loading" :is-full-page="false" :can-cancel="false"></b-loading>
         </div>
-        <div v-else class="has-text-centered">
+        <div v-if="!tracks.length && !loading" class="has-text-centered">
             <span>No tracks found</span>
         </div>
     </div>
@@ -19,7 +20,8 @@ import Track from './Track.vue'
 export default {
 	name: 'Navbar',
 	props: [
-		'tracks'
+        'tracks',
+        'loading'
     ],
 	components: {
 		Track
@@ -28,4 +30,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.track-list {
+    position: relative;
+    height: 5rem;
+
+    .loading-overlay .loading-background {
+        background: transparent !important;
+    }
+}
 </style>

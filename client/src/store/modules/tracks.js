@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { get } from '@/services/api'
 import { DEFAULT_TRACK } from '@/constants'
 
 function getDefaultTrack() {
@@ -10,7 +11,8 @@ const getTrack = (tracks, id) => {
 }
 
 const state = {
-    tracks: []
+	tracks: [],
+	loading: false
 }
 
 const getters = {}
@@ -18,6 +20,9 @@ const getters = {}
 const mutations = {
     TRACKS_SET(state, tracks) {
         state.tracks = tracks
+	},
+	TRACKS_LOADING_SET(state, loading) {
+		state.loading = loading
 	},
 	TRACK_ADD(state, track) {
 		state.tracks.push(track)
@@ -63,7 +68,17 @@ const mutations = {
 }
 
 const actions = {
-	addTracks({ dispatch, commit }, tracks) {
+	async fetchTracks({ commit, dispatch }) {
+		commit('TRACKS_LOADING_SET', true)
+
+		const tracks = await get('/tracks')
+
+		dispatch('addTracks', tracks)
+
+		commit('TRACKS_LOADING_SET', false)
+
+	},
+	addTracks({ commit, dispatch }, tracks) {
 		commit('TRACKS_SET', [])
 
 		tracks.map((track) => {

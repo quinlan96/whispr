@@ -23,6 +23,15 @@ const decryptToken = (authorization) => {
     })
 }
 
+const tokenIfExists = (authorization) => {
+    try {
+        return decryptToken(authorization)
+    } catch(e) {
+        return null
+    }
+}
+
 export {
-	decryptToken
+    decryptToken,
+    tokenIfExists
 }

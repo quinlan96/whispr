@@ -1,7 +1,7 @@
 <template>
 	<div class="container tracklist">
 		<h1 class="title">Latest Tracks</h1>
-		<TrackList :tracks="tracks.tracks" />
+		<TrackList :tracks="tracks.tracks" :loading="tracks.loading" />
 	</div>
 </template>
 
@@ -9,7 +9,6 @@
 import { mapState } from 'vuex'
 
 import TrackList from '@/components/tracks/TrackList.vue'
-import { get } from '@/services/api'
 
 export default {
 	name: 'Home',
@@ -17,7 +16,7 @@ export default {
 		'tracks'
 	]),
 	async mounted() {
-		this.$store.dispatch('addTracks', await get('/tracks'))
+		this.$store.dispatch('fetchTracks')
 	},
 	components: {
 		TrackList

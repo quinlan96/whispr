@@ -5,7 +5,7 @@ import ffmpeg from 'fluent-ffmpeg'
 
 import authenticate from '../../middleware/auth'
 import { generateWaveform } from '../../services/waveform'
-import { decryptToken } from '../../services/token'
+import { tokenIfExists } from '../../services/token'
 import { STORAGE_DIR } from '../../constants'
 
 import Track from '../../models/Track'
@@ -13,18 +13,17 @@ import Track from '../../models/Track'
 const router = express.Router()
 
 router.get('/tracks', async (req, res, next) => {
-	let token = null
+    const token = tokenIfExists(req.headers.authorization)
 
-	try {
-		token = decryptToken(req.headers.authorization)
-	} catch(e) {
-	}
+    try {
+        const tracks = await Promise.all((await Track.getPublicTracks()).map((track) => {
+            return track.getPublicJson(token ? token.id : null)
+        }))
 
-	const tracks = await Promise.all((await Track.getPublicTracks()).map(async (track) => {
-		return track.getPublicJson(token ? token.id : null)
-	}))
-	
-	res.json(tracks)
+        res.json(tracks)
+    } catch(err) {
+        next(err)
+    }
 })
 
 router.post('/tracks', authenticate, async (req, res, next) => {
@@ -33,13 +32,13 @@ router.post('/tracks', authenticate, async (req, res, next) => {
     const status = "DISABLED"
 
     const track = await Track.query().insertGraph({
-		id: req.body.id,
-		user_id: userId,
+        id: req.body.id,
+        user_id: userId,
         title: req.body.title,
         description: req.body.description,
         status: status,
     })
-    
+
     res.json(track)
 })
 
